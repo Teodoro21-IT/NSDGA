@@ -1,0 +1,144 @@
+ *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f5f5f5; }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      background: #c0392b; display: flex; align-items: center;
+      padding: 10px 24px; gap: 14px;
+    }
+    .school-logo {
+      width: 52px; height: 52px; background: #fff;
+      border-radius: 50%; border: 3px solid #fff;
+      overflow: hidden; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .school-logo a { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; border-radius: 50%; overflow: hidden; }
+    .school-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .school-title {
+      color: #fff; font-size: clamp(0.85rem, 2.5vw, 1.35rem);
+      font-weight: bold; line-height: 1.3;
+      font-family: 'Koh Santepheap', Arial, sans-serif;
+    }
+
+    /* ── NAV ── */
+    nav { background: #fff; border-bottom: 2px solid #ddd; position: relative; }
+    .nav-inner {
+      display: flex; align-items: center;
+      padding: 0 16px; max-width: 1100px; margin: 0 auto; flex-wrap: wrap;
+    }
+    .hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      padding: 12px 16px; margin-left: auto; flex-direction: column; gap: 5px;
+    }
+    .hamburger span { display: block; width: 24px; height: 2px; background: #c0392b; border-radius: 2px; transition: all 0.3s; }
+    .nav-menu { display: flex; align-items: center; flex: 1; }
+    .nav-item { position: relative; }
+    .nav-link {
+      display: block; padding: 14px 14px; font-size: 0.74rem; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase; color: #333; text-decoration: none;
+      cursor: pointer; transition: color 0.2s, background 0.2s;
+      white-space: nowrap; user-select: none; border-bottom: 3px solid transparent;
+    }
+    .nav-link.active { color: #c0392b; border-bottom: 3px solid #c0392b; }
+    .nav-link:hover, .nav-item:hover .nav-link { color: #c0392b; background: #fdf0ef; }
+    .nav-spacer { flex: 1; }
+    .dropdown {
+      display: none; position: absolute; top: 100%; left: 0;
+      background: #fff; min-width: 200px; border: 1px solid #ddd;
+      border-top: 3px solid #c0392b; box-shadow: 0 6px 18px rgba(0,0,0,0.12); z-index: 200;
+    }
+    .nav-item:hover .dropdown { display: block; }
+    .dropdown a {
+      display: block; padding: 12px 18px; font-size: 0.82rem; color: #333;
+      text-decoration: none; border-bottom: 1px solid #f0f0f0; transition: background 0.18s, color 0.18s;
+    }
+    .dropdown a:last-child { border-bottom: none; }
+    .dropdown a:hover { background: #c0392b; color: #fff; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 460px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background-color: #4a4a4a;
+    }
+    .hero-bg img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      display: block; opacity: 0.6;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0; z-index: 1;
+      background: rgba(0,0,0,0.25);
+    }
+
+    /* ── CARDS ── */
+    .cards-area {
+      position: relative; z-index: 2;
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      padding: 60px 48px;
+      flex-wrap: wrap;
+    }
+
+    .cal-card {
+      border-radius: 18px;
+      width: 260px;
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      padding: 0 0 22px;
+      text-decoration: none;
+      overflow: hidden;
+      position: relative;
+      background: rgba(210,210,210,0.82);
+    }
+    .cal-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 14px 36px rgba(0,0,0,0.3);
+    }
+    .cal-card-bg { position: absolute; inset: 0; z-index: 0; }
+    .cal-card-bg img {
+      width: 100%; height: 100%;
+      object-fit: cover; border-radius: 18px; display: block;
+    }
+    .cal-card-overlay {
+      position: absolute; inset: 0; z-index: 1;
+      background: rgba(0,0,0,0.18); border-radius: 18px;
+    }
+    .cal-card-icon {
+      position: relative; z-index: 2;
+      width: 110px; height: 92px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: auto; margin-top: 36px;
+    }
+    .cal-card-icon svg {
+      width: 100px; height: 84px;
+      stroke: #888; fill: none; stroke-width: 2;
+    }
+    .cal-card-label {
+      position: relative; z-index: 2;
+      font-size: 0.75rem; font-weight: 900;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: #222; text-align: center;
+      background: rgba(220,220,220,0.88);
+      padding: 7px 18px; border-radius: 20px; margin-top: 12px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #c0392b; color: #fff; text-align: center;
+      padding: 14px 16px; font-size: 0.75rem;
+      letter-spacing: 0.03em; line-height: 1.5;
+    }
