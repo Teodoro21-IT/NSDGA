@@ -92,13 +92,6 @@
             </div>
         </div>
     </main>
-    <div class="p-6 border-t border-slate-100">
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="w-full flex items-center justify-center space-x-2 p-3 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white rounded-xl transition-all font-bold text-xs uppercase tracking-wider">
-                    <span>Logout Account</span>
-                </button>
-            </form>
-        </div>
+    
 </body>
 </html>
