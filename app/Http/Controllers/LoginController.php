@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -7,54 +9,62 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\DB;
 use App\Models\AuditLog;
+use App\Mail\OtpMail; // Added this
+use Illuminate\Support\Facades\Mail; // Added this
 
 class LoginController extends Controller
 {
-    //  Process ng Login at Send ng OTP
-   // Update your Login function to check for the lock immediately
-public function login(Request $request)
-{
-    $credentials = $request->validate([
-        'user' => 'required',
-        'password' => 'required',
-    ]);
-
-    if (Auth::validate(['user' => $request->user, 'password' => $request->password])) {
-        $user = User::where('user', $request->user)->first();
-
-        // 1. Check if the account is locked BEFORE sending OTP
-        if ($user->is_locked) {
-            return back()->withErrors(['user' => 'This account has been locked. Please contact the administrator.']);
-        }
-
-        // Generate 6-digit OTP
-        $otp = rand(100000, 999999);
-        $user->update([
-            'otp_code' => $otp,
-            'otp_expires_at' => now()->addMinutes(10),
+    // Process ng Login at Send ng OTP
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'user' => 'required',
+            'password' => 'required',
         ]);
 
-        // Send SMS via Semaphore
-        try {
-            Http::asForm()->post('https://semaphore.co/api/v4/messages', [
-                'apikey' => env('SEMAPHORE_API_KEY'),
-                'number' => $user->phone_number,
-                'message' => "Your NSDGA Security Code: {$otp}. Valid for 10 minutes.",
-                'sendername' => 'SEMAPHORE'
+        if (Auth::validate(['user' => $request->user, 'password' => $request->password])) {
+            $user = User::where('user', $request->user)->first();
+
+            // 1. Check if the account is locked BEFORE sending OTP
+            if ($user->is_locked) {
+                return back()->withErrors(['user' => 'This account has been locked. Please contact the administrator.']);
+            }
+
+            // Generate 6-digit OTP
+            $otp = rand(100000, 999999);
+            $user->update([
+                'otp_code' => $otp,
+                'otp_expires_at' => now()->addMinutes(10),
             ]);
-        } catch (\Exception $e) {
-            \Log::error("SMS Failed: " . $e->getMessage());
+
+            // --- SEND OTP VIA EMAIL ---
+            try {
+                Mail::to($user->email)->send(new OtpMail($otp));
+            } catch (\Exception $e) {
+                \Log::error("Email Failed: " . $e->getMessage());
+            }
+
+            // --- SEND OTP VIA SMS (Semaphore) ---
+            try {
+                Http::asForm()->post('https://semaphore.co/api/v4/messages', [
+                    'apikey' => env('SEMAPHORE_API_KEY'),
+                    'number' => $user->phone_number,
+                    'message' => "Your NSDGA Security Code: {$otp}. Valid for 10 minutes.",
+                    'sendername' => 'SEMAPHORE'
+                ]);
+            } catch (\Exception $e) {
+                \Log::error("SMS Failed: " . $e->getMessage());
+            }
+
+            session(['otp_user_id' => $user->id]);
+            return redirect()->route('otp.view');
         }
 
-        session(['otp_user_id' => $user->id]);
-        return redirect()->route('otp.view');
+        return back()->withErrors(['user' => 'The provided credentials do not match our records.']);
     }
 
-    return back()->withErrors(['user' => 'The provided credentials do not match our records.']);
-}
-
-// ToggleLock for Security
-public function toggleLock($id)
+    // ToggleLock for Security
+    public function toggleLock($id)
     {
         $user = User::findOrFail($id);
 
@@ -65,7 +75,6 @@ public function toggleLock($id)
         $user->is_locked = !$user->is_locked;
         $user->save();
 
-        // --- UPDATED AUDIT LOG (using Model) ---
         AuditLog::create([
             'user_id'    => Auth::id(),
             'action'     => $user->is_locked ? 'Locked Account' : 'Unlocked Account',
@@ -76,7 +85,8 @@ public function toggleLock($id)
         $status = $user->is_locked ? 'locked' : 'unlocked';
         return back()->with('success', "Account for {$user->full_name} has been {$status}.");
     }
-    //  Pag Verify ng OTP and Redirect to Role-Specific Dashboard
+
+    // Pag Verify ng OTP and Redirect to Role-Specific Dashboard
     public function verifyOtp(Request $request)
     {
         $request->validate(['otp' => 'required|numeric']);
@@ -90,18 +100,16 @@ public function toggleLock($id)
             session()->forget('otp_user_id');
 
             // Role-Based Redirection
-           return match ($user->role) {
-    'admin'     => redirect()->route('admin.dashboard'),
-'registrar' => redirect()->route('registrar_dashboard'),
-    default     => redirect('/login'),
-};
-
-
-
+            return match ($user->role) {
+                'admin'     => redirect()->route('admin.dashboard'),
+                'registrar' => redirect()->route('registrar_dashboard'),
+                default     => redirect('/login'),
+            };
         }
 
         return back()->withErrors(['otp' => 'The code is invalid or has expired.']);
     }
+
     // Pag Log out ng users
     public function logout(Request $request)
     {
@@ -112,7 +120,7 @@ public function toggleLock($id)
     }
 
     // Admin Creating User Account 
-public function store(Request $request)
+    public function store(Request $request)
     {
         $newUser = User::create([
             'full_name'    => $request->full_name,
@@ -123,7 +131,6 @@ public function store(Request $request)
             'role'         => $request->role,
         ]);
 
-        // --- UPDATED AUDIT LOG (using Model) ---
         AuditLog::create([
             'user_id'    => Auth::id(),
             'action'     => 'Created New Account',
@@ -134,49 +141,51 @@ public function store(Request $request)
         return back()->with('success', 'Account added successfully!');
     }
 
-// Pag Resend ng OTP
-public function resendOtp(Request $request)
-{
-    // Find the user from the temporary session ID
-    $userId = session('otp_user_id');
-    $user = \App\Models\User::find($userId);
+    // Pag Resend ng OTP
+    public function resendOtp(Request $request)
+    {
+        $userId = session('otp_user_id');
+        $user = User::find($userId);
 
-    if (!$user) {
-        return redirect()->route('login')->withErrors(['user' => 'Session expired. Please login again.']);
-    }
+        if (!$user) {
+            return redirect()->route('login')->withErrors(['user' => 'Session expired. Please login again.']);
+        }
 
-    // Generate new 6-digit OTP
-    $otp = rand(100000, 999999);
-    $user->update([
-        'otp_code' => $otp,
-        'otp_expires_at' => now()->addMinutes(10), // Valid for 10 minutes
-    ]);
-
-    // Re-send SMS via Semaphore
-    try {
-        \Illuminate\Support\Facades\Http::asForm()->post('https://semaphore.co/api/v4/messages', [
-            'apikey' => env('SEMAPHORE_API_KEY'),
-            'number' => $user->phone_number,
-            'message' => "Your NEW NSDGA Security Code: {$otp}. Valid for 10 minutes.",
+        $otp = rand(100000, 999999);
+        $user->update([
+            'otp_code' => $otp,
+            'otp_expires_at' => now()->addMinutes(10),
         ]);
-    } catch (\Exception $e) {
-        \Illuminate\Support\Facades\Log::error("Resend SMS Failed: " . $e->getMessage());
+
+        // --- RESEND EMAIL ---
+        try {
+            Mail::to($user->email)->send(new OtpMail($otp));
+        } catch (\Exception $e) {
+            \Log::error("Resend Email Failed: " . $e->getMessage());
+        }
+
+        // --- RESEND SMS ---
+        try {
+            Http::asForm()->post('https://semaphore.co/api/v4/messages', [
+                'apikey' => env('SEMAPHORE_API_KEY'),
+                'number' => $user->phone_number,
+                'message' => "Your NEW NSDGA Security Code: {$otp}. Valid for 10 minutes.",
+            ]);
+        } catch (\Exception $e) {
+            \Log::error("Resend SMS Failed: " . $e->getMessage());
+        }
+
+        return back()->with('success', 'A new OTP has been sent to your phone and email.');
     }
 
-    return back()->with('success', 'A new OTP has been sent to your phone.');
-}
-
-
-//This will delete User Accounts 
-public function destroy($id)
+    // Delete User Accounts 
+    public function destroy($id)
     {
         try {
             $account = User::findOrFail($id);
             $targetName = $account->full_name; 
-
             $account->delete();
 
-            // --- UPDATED AUDIT LOG (using Model) ---
             AuditLog::create([
                 'user_id'    => Auth::id(),
                 'action'     => 'Deleted Account',
@@ -191,52 +200,44 @@ public function destroy($id)
     }
 
     // Processes the actual update
-public function update(Request $request, $id)
-{
-    $user = User::findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
 
-   $validated = $request->validate([
-    'full_name'    => 'required|string|max:255',
-    // Change 'users' to 'accounts' here
-    'user'         => ['required', 'string', 'unique:accounts,user,' . $id],
-    'email'        => ['required', 'email', 'unique:accounts,email,' . $id],
-    'phone_number' => 'required|string',
-    'role'         => 'required|in:admin,registrar',
-    'pass'         => 'nullable|min:8', 
-]);
+        $validated = $request->validate([
+            'full_name'    => 'required|string|max:255',
+            'user'         => ['required', 'string', 'unique:accounts,user,' . $id],
+            'email'        => ['required', 'email', 'unique:accounts,email,' . $id],
+            'phone_number' => 'required|string',
+            'role'         => 'required|in:admin,registrar',
+            'pass'         => 'nullable|min:8', 
+        ]);
 
+        $user->full_name    = $request->full_name;
+        $user->user         = $request->user;
+        $user->email        = $request->email;
+        $user->phone_number = $request->phone_number;
+        $user->role         = $request->role;
 
-    // Update basic info
-    $user->full_name    = $request->full_name;
-    $user->user         = $request->user;
-    $user->email        = $request->email;
-    $user->phone_number = $request->phone_number;
-    $user->role         = $request->role;
+        if ($request->filled('pass')) {
+            $user->password = bcrypt($request->pass);
+        }
 
-    // Only update password if the field is not empty
-    if ($request->filled('pass')) {
-        $user->password = bcrypt($request->pass);
+        $user->save();
+
+        AuditLog::create([
+            'user_id'    => Auth::id(),
+            'action'     => 'Updated Account Info',
+            'target'     => $user->full_name . " ({$user->user})",
+            'ip_address' => request()->ip(),
+        ]);
+
+        return back()->with('success', "Account for {$user->full_name} updated successfully!");
     }
 
-    $user->save();
-
-    // --- AUDIT LOG ---
-    AuditLog::create([
-        'user_id'    => Auth::id(),
-        'action'     => 'Updated Account Info',
-        'target'     => $user->full_name . " ({$user->user})",
-        'ip_address' => request()->ip(),
-    ]);
-
-    return back()->with('success', "Account for {$user->full_name} updated successfully!");
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
+        return response()->json($user); 
+    }
 }
-
-// Optional: If you use a separate page or AJAX to get user data
-public function edit($id)
-{
-    $user = User::findOrFail($id);
-    return response()->json($user); 
-}
-}
-
-
