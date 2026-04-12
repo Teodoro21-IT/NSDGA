@@ -23,4 +23,8 @@ class RegistrarMiddleware
         // Redirect non-registrars (e.g., to login)
         return redirect('/login')->with('error', 'Unauthorized access.');
     }
-}
+    
+
+
+
+    }

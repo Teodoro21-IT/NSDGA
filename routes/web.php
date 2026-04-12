@@ -68,16 +68,20 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
-    // --- REGISTRAR ONLY ROUTES ---
-        
-    Route::prefix('registrar')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('registrar.registrar_dashboard');
-        })->name('registrar_dashboard');
-     });
-        Route::get('/change-password', [PasswordController::class, 'showRegistrar'])->name('registrar.password.show');
-        Route::post('/change-password', [PasswordController::class, 'updateRegistrar'])->name('registrar.password.update');
+  // --- REGISTRAR ONLY ROUTES ---
+Route::middleware(['auth', 'registrar'])->prefix('registrar')->group(function () {
+    
+    Route::get('/dashboard', function () {
+        return view('registrar.registrar_dashboard');
+    })->name('registrar_dashboard');
 
+    Route::get('/change-password', [PasswordController::class, 'showRegistrar'])
+        ->name('registrar.password.show');
+    
+    Route::post('/change-password', [PasswordController::class, 'updateRegistrar'])
+        ->name('registrar.password.update');
+
+    // Add your other registrar routes here (Enrollment, Student Files, Certifications)
 });
 
 Route::middleware(['student'])->group(function () {
@@ -205,3 +209,4 @@ Route::middleware(['student'])->group(function () {
     
 });
 
+});

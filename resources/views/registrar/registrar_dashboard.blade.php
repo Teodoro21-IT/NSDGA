@@ -19,19 +19,12 @@
         <nav class="flex-1 px-4 space-y-1">
             <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition">
                 <span class="text-lg">📋</span>
-                <span>Enrollment</span>
+                <span>Dashboard</span>
             </a>
-            <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition">
-                <span class="text-lg">📂</span>
-                <span>Student Files</span>
-            </a>
-            <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition">
-                <span class="text-lg">📑</span>
-                <span>Certifications</span>
-            </a>
+           
             <a href="{{ route('registrar.password.show') }}" class="flex items-center space-x-3 p-3 rounded-xl bg-indigo-600 text-white font-semibold shadow-lg shadow-indigo-900/20 transition">
                 <span class="text-lg">🔒</span>
-                <span>Change Password</span>
+                <span>Settings</span>
             </a>
         </nav>
 
@@ -45,64 +38,115 @@
         </div>
     </aside>
 
-    <main class="flex-1">
-        <header class="bg-white/90 backdrop-blur-sm border-b border-slate-200 p-5 flex justify-between items-center sticky top-0 z-50">
-            <h2 class="text-lg font-bold tracking-tight text-slate-700">Change Password</h2>
+    <main class="flex-1 flex flex-col min-h-screen">
+        <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-10 p-4 px-8 flex justify-between items-center">
+            <div>
+                <h2 class="text-sm font-medium text-slate-500">Welcome back,</h2>
+                <p class="text-lg font-bold text-slate-900">Registrar Administrator</p>
+            </div>
             <div class="flex items-center space-x-4">
-                <div class="text-right">
-                    <p class="text-xs font-bold text-slate-900 leading-none">{{ Auth::user()->user }}</p>
-                    <p class="text-[10px] text-indigo-500 font-bold uppercase">System Officer</p>
-                </div>
-                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
-                    <span class="text-white font-black text-xs">RG</span>
-                </div>
+                <button class="p-2 text-slate-400 hover:text-indigo-600 transition">
+                    <span class="text-xl">🔔</span>
+                </button>
+                <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 border-2 border-white shadow-sm"></div>
             </div>
         </header>
 
-        <div class="p-8 max-w-xl mx-auto">
-            <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
-                <h3 class="text-2xl font-black text-slate-900 mb-6">Update Your Password</h3>
-
-                @if(session('success'))
-                    <div class="mb-4 p-4 bg-emerald-50 text-emerald-700 rounded-2xl font-semibold text-sm">
-                        {{ session('success') }}
+        <div class="p-8 space-y-8">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl text-xl">👨‍🎓</div>
+                        <span class="text-xs font-bold text-green-500 bg-green-50 px-2 py-1 rounded-lg">+12%</span>
                     </div>
-                @endif
+                    <h3 class="text-slate-500 text-sm font-medium">Total Students</h3>
+                    <p class="text-2xl font-black text-slate-900">1,284</p>
+                </div>
 
-                @if(session('error'))
-                    <div class="mb-4 p-4 bg-red-50 text-red-700 rounded-2xl font-semibold text-sm">
-                        {{ session('error') }}
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl text-xl">📄</div>
+                        <span class="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-lg">Steady</span>
                     </div>
-                @endif
+                    <h3 class="text-slate-500 text-sm font-medium">Pending Requests</h3>
+                    <p class="text-2xl font-black text-slate-900">42</p>
+                </div>
 
-                <form method="POST" action="{{ route('registrar.password.update') }}" class="space-y-5">
-                    @csrf
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-amber-50 text-amber-600 rounded-2xl text-xl">📅</div>
+                        <span class="text-xs font-bold text-amber-500 bg-amber-50 px-2 py-1 rounded-lg">Today</span>
+                    </div>
+                    <h3 class="text-slate-500 text-sm font-medium">Scheduled Appointments</h3>
+                    <p class="text-2xl font-black text-slate-900">08</p>
+                </div>
+            </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Current Password</label>
-                        <input type="password" name="current_password"
-                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm" required>
-                        @error('current_password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <div class="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-6 border-b border-slate-50 flex justify-between items-center">
+                        <h3 class="font-bold text-slate-800">Recent Enrollment Applications</h3>
+                        <button class="text-indigo-600 text-sm font-semibold hover:underline">View All</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-50/50 text-slate-400 text-[11px] uppercase tracking-widest">
+                                <tr>
+                                    <th class="px-6 py-4">Student Name</th>
+                                    <th class="px-6 py-4">Program</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4 text-right">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50 text-sm">
+                                <tr class="hover:bg-slate-50/50 transition">
+                                    <td class="px-6 py-4 font-medium text-slate-700">Julianne Moore</td>
+                                    <td class="px-6 py-4 text-slate-500">BS Computer Science</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold">Pending</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right text-slate-400 text-xs">Apr 12, 2026</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/50 transition">
+                                    <td class="px-6 py-4 font-medium text-slate-700">Marcus Wright</td>
+                                    <td class="px-6 py-4 text-slate-500">AB Communication</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Approved</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right text-slate-400 text-xs">Apr 11, 2026</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-indigo-900 rounded-3xl p-6 text-white shadow-xl shadow-indigo-200 relative overflow-hidden">
+                        <div class="relative z-10">
+                            <h3 class="font-bold text-lg mb-2">System Update</h3>
+                            <p class="text-indigo-200 text-xs leading-relaxed mb-4">The student portal will undergo maintenance tonight at 12:00 PM.</p>
+                            <button class="bg-white text-indigo-900 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider">Dismiss</button>
+                        </div>
+                        <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-500/20 rounded-full"></div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">New Password</label>
-                        <input type="password" name="password"
-                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm" required>
-                        @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                        <h3 class="font-bold text-slate-800 mb-4">Quick Actions</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button class="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl hover:bg-indigo-50 hover:text-indigo-600 transition group">
+                                <span class="text-xl mb-1">➕</span>
+                                <span class="text-[10px] font-bold uppercase tracking-tight text-slate-500 group-hover:text-indigo-600">Add Student</span>
+                            </button>
+                            <button class="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl hover:bg-indigo-50 hover:text-indigo-600 transition group">
+                                <span class="text-xl mb-1">🖨️</span>
+                                <span class="text-[10px] font-bold uppercase tracking-tight text-slate-500 group-hover:text-indigo-600">Reports</span>
+                            </button>
+                        </div>
                     </div>
+                </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Confirm New Password</label>
-                        <input type="password" name="password_confirmation"
-                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm" required>
-                    </div>
-
-                    <button type="submit"
-                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition shadow-lg shadow-indigo-200">
-                        Update Password
-                    </button>
-                </form>
             </div>
         </div>
     </main>
