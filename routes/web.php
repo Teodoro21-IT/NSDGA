@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB; 
 use App\Models\User;
 use App\Models\AuditLog;
+use App\Http\Controllers\PasswordController;
+use App\Http\Middleware\RegistrarMiddleware;
+
 
 // --- Public Access ---
 Route::get('/login', function () { return view('login'); })->name('login');
@@ -59,17 +62,21 @@ Route::middleware(['auth'])->group(function () {
         // Admin Content
         Route::get('/students', [AdminController::class, 'students'])->name('admin.students');
         Route::get('/events/create', [AdminController::class, 'createEvent'])->name('admin.events.create');
-        Route::post('/events/store', [AdminController::class, 'storeEvent'])->name('admin.events.store');
-        Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings');
-        Route::post('/settings/update', [AdminController::class, 'updateSettings'])->name('admin.settings.update');
+        Route::post('/events/store', [AdminController::class, 'storeEvent'])->name('admin.events.store');       
+        Route::get('/change-password', [PasswordController::class, 'show'])->name('password.show');
+        Route::post('/change-password', [PasswordController::class, 'update'])->name('password.update');
+
     });
 
     // --- REGISTRAR ONLY ROUTES ---
+        
     Route::prefix('registrar')->group(function () {
         Route::get('/dashboard', function () {
             return view('registrar.registrar_dashboard');
         })->name('registrar_dashboard');
-    });
+     });
+        Route::get('/change-password', [PasswordController::class, 'showRegistrar'])->name('registrar.password.show');
+        Route::post('/change-password', [PasswordController::class, 'updateRegistrar'])->name('registrar.password.update');
 
 });
 
