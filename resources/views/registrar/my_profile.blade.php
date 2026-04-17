@@ -2,132 +2,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>my_profile | Dashboard</title>
+    <title>My Profile | NSDGA</title>
     @vite(['resources/css/app.css'])
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style> 
-        body { font-family: 'Inter', sans-serif; } 
-        
-        .main-content { margin-left: 260px; } 
-    </style>
 </head>
-<body class="bg-[#F3F4F6] min-h-screen text-slate-800">
+<body class="bg-[#F3F4F6] min-h-screen text-slate-800 flex overflow-x-hidden">
 
-    {{-- The Fixed Sidebar --}}
+    {{-- Fixed Sidebar  --}}
     @include('components.registrar.registrar-sidebar')
 
-  <main class="main-content min-h-screen pb-12">
-    {{-- Header --}}
-    <div class="bg-white border-b border-gray-200 px-8 py-12 mb-8">
-        <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-8">
-            {{-- Profile Picture / Avatar --}}
-            <div class="relative group">
-                <div class="w-32 h-32 rounded-2xl bg-indigo-600 flex items-center justify-center text-white text-4xl font-bold shadow-xl shadow-indigo-100 ring-4 ring-white">
-                    AD
-                </div>
-                <button class="absolute -bottom-2 -right-2 p-2 bg-white rounded-xl shadow-lg border border-gray-100 text-gray-500 hover:text-indigo-600 transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                </button>
-            </div>
-
-            <div class="text-center md:text-left space-y-2">
-                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Registar Dashboard</h1>
-                <p class="text-indigo-600 font-medium bg-indigo-50 px-3 py-1 rounded-full inline-block text-sm uppercase tracking-wider">Registrar Office</p>
-                <div class="flex items-center justify-center md:justify-start gap-4 text-gray-400 text-sm">
-                    <span class="flex items-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> registrar@nsdga.edu.ph</span>
-                    <span class="flex items-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg> Marikina City</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="max-w-5xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+  
+    <div class="flex-1 flex flex-col min-w-0 ml-[260px]">
         
-        {{-- Left Column: Account Details --}}
-        <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                    <h2 class="font-bold text-gray-800">Personal Information</h2>
-                    <button class="text-sm font-bold text-indigo-600 hover:text-indigo-700">Edit Details</button>
-                </div>
-                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">First Name</label>
-                        <p class="text-sm font-semibold text-gray-700">Teodoro</p>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Last Name</label>
-                        <p class="text-sm font-semibold text-gray-700">Repizo</p>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Official Employee ID</label>
-                        <p class="text-sm font-semibold text-gray-700">NSDGA-2026-REG-01</p>
-                    </div>
-                </div>
-            </div>
+        {{-- Fixed Navbar --}}
+        @include('components.registrar.registrar-navbar')
 
-            {{-- Security Section --}}
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100">
-                    <h2 class="font-bold text-gray-800">Security & Password</h2>
-                </div>
-                <div class="p-6 space-y-4">
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-gray-700">Password</p>
-                                <p class="text-xs text-gray-500">Last changed 3 months ago</p>
-                            </div>
-                        </div>
-                        <button class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 transition">Update</button>
+        <main class="min-h-screen pt-24 pb-12 px-8">
+            <div class="max-w-6xl mx-auto">
+                
+                {{-- Profile Header Card --}}
+                <div class="bg-white rounded-2xl shadow-sm p-8 mb-8 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-maroon-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
+                    
+                    <div class="relative flex-shrink-0">
+                        <img src="{{ asset('images/nailong.png') }}" alt="Avatar" 
+                             class="h-32 w-32 rounded-2xl object-cover shadow-lg border-4 border-white ring-1 ring-gray-100">
                     </div>
                     
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-green-100 text-green-600 rounded-lg">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    <div class="text-center md:text-left min-w-0 flex-1">
+                        {{-- 'truncate' prevents the encrypted string from breaking the layout --}}
+                        <h1 class="text-4xl font-black text-slate-800 tracking-tight mb-1 truncate">
+                            {{ Auth::user()->full_name }}
+                        </h1>
+                        <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 text-gray-500">
+                            <span class="flex items-center gap-1.5 font-bold text-maroon-800 uppercase text-xs tracking-widest">
+                                <i class="fas fa-briefcase"></i> Registrar
+                            </span>
+                            <span class="text-gray-300">|</span>
+                            <span class="text-sm font-medium tracking-tight uppercase">
+                                EMPLOYEE ID NO. {{ Auth::user()->user }}            
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Information Grid --}}
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    {{-- Personal Information --}}
+                    <div class="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm">
+                        <div class="flex items-center gap-3 mb-8 pb-3 border-b border-dashed border-gray-100">
+                            <div class="p-2 bg-maroon-50 text-maroon-800 rounded-lg">
+                                <i class="fas fa-user text-sm"></i>
+                            </div>
+                            <h2 class="font-bold uppercase text-xs tracking-[0.2em] text-slate-600">Personal Information</h2>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-y-8">
+                            <div class="min-w-0">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Full Name</label>
+                                <p class="text-sm font-bold text-slate-800 truncate">{{ Auth::user()->full_name }}</p>
                             </div>
                             <div>
-                                <p class="text-sm font-bold text-gray-700">Two-Factor Authentication</p>
-                                <p class="text-xs text-green-600 font-medium">Currently Enabled</p>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Gender</label>
+                                <p class="text-sm font-bold text-slate-800">Male add database</p>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Birthdate</label>
+                                <p class="text-sm font-bold text-slate-800">April 16, 2004 add database</p>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Nationality</label>
+                                <p class="text-sm font-bold text-slate-800">Filipino add database</p>
                             </div>
                         </div>
-                        <button class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-xs font-bold text-red-500 hover:bg-red-50 transition">Disable</button>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        {{-- Right Column: Activity / Logs --}}
-        <div class="space-y-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h3 class="font-bold text-gray-800 mb-4">Account Stats</h3>
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center border-b border-gray-50 pb-2">
-                        <span class="text-xs text-gray-500">Member Since</span>
-                        <span class="text-xs font-bold text-gray-700">Aug 2024</span>
+                    {{-- Professional Details --}}
+                    <div class="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm">
+                        <div class="flex items-center gap-3 mb-8 pb-3 border-b border-dashed border-gray-100">
+                            <div class="p-2 bg-maroon-50 text-maroon-800 rounded-lg">
+                                <i class="fas fa-id-card text-sm"></i>
+                            </div>
+                            <h2 class="font-bold uppercase text-xs tracking-[0.2em] text-slate-600">Professional Details</h2>
+                        </div>
+                        
+                        <div class="space-y-8">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Department</label>
+                                <p class="text-sm font-bold text-slate-800 uppercase tracking-tight">Office of the Registrar</p>
+                            </div>
+                            <div class="grid grid-cols-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Date Hired</label>
+                                    <p class="text-sm font-bold text-slate-800">Add Database</p>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Employment Status</label>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="h-2 w-2 rounded-full bg-blue-600"></span>
+                                        <p class="text-sm font-bold text-slate-800">Add database</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex justify-between items-center border-b border-gray-50 pb-2">
-                        <span class="text-xs text-gray-500">Records Verified</span>
-                        <span class="text-xs font-bold text-gray-700">842</span>
+                </div>
+
+                {{-- Contact Information --}}
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-50">
+                    <div class="flex items-center justify-between mb-10">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-maroon-50 text-maroon-800 rounded-lg">
+                                <i class="fas fa-envelope-open-text text-sm"></i>
+                            </div>
+                            <h2 class="font-bold uppercase text-xs tracking-[0.2em] text-slate-600">Contact Information</h2>
+                        </div>
+                        <button class="bg-[#800000] hover:bg-[#600000] text-white px-10 py-2.5 rounded-xl text-xs font-black tracking-widest transition shadow-lg shadow-maroon-100">
+                            SAVE CHANGES
+                        </button>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs text-gray-500">Status</span>
-                        <span class="text-xs font-bold text-green-600">Active Account</span>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Email Address</label>
+                            <input type="email" value="{{ Auth::user()->email }}" 
+                                   class="w-full bg-gray-50 border-none rounded-xl p-4 text-sm font-bold text-slate-700 truncate" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Phone Number</label>
+                            <input type="text" value="{{ Auth::user()->phone_number }}" 
+                                   class="w-full bg-gray-50 border-none rounded-xl p-4 text-sm font-bold text-slate-700 truncate" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Home Address</label>
+                            <input type="text" value="Mag add ako ng home address dito sa database" 
+                                   class="w-full bg-gray-50 border-none rounded-xl p-4 text-sm font-bold text-slate-700" readonly>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <button class="w-full py-3 bg-red-50 text-red-600 rounded-2xl text-sm font-bold hover:bg-red-100 transition flex items-center justify-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                Logout from System
-            </button>
-        </div>
+        </main>
     </div>
-</main>
-
 </body>
 </html>

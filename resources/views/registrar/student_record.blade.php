@@ -4,82 +4,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Records | Dashboard</title>
     @vite(['resources/css/app.css'])
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style> 
         body { font-family: 'Inter', sans-serif; } 
+        /* Sync content margin with your sidebar width */
         .main-content { margin-left: 260px; } 
     </style>
 </head>
-<body class="bg-[#F3F4F6] min-h-screen text-slate-800">
+<body class="bg-[#F8F9FA] min-h-screen text-slate-800">
 
     {{-- The Fixed Sidebar --}}
     @include('components.registrar.registrar-sidebar')
 
     {{-- Main Content Wrapper --}}
     <main class="main-content min-h-screen transition-all duration-300">
-        <div class="p-8">
+
+        {{-- Fixed Navbar included inside main content --}}
+        @include('components.registrar.registrar-navbar')
+        
+        {{-- Added padding-top (pt-24) to ensure content starts below fixed navbar --}}
+        <div class="p-10 pt-24 space-y-8">
+            
             {{-- Page Header --}}
-            <div class="flex justify-between items-center mb-8">
+            <div class="flex justify-between items-end">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Student Records</h1>
-                    <p class="text-sm text-gray-500">Manage and view all enrolled students in the system</p>
+                    <h1 class="text-[32px] font-extrabold text-slate-900 tracking-tight">Student Records</h1>
+                    <p class="text-slate-500 font-medium mt-1">Manage and view all enrolled students in the system</p>
                 </div>
-                <button class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition shadow-lg shadow-indigo-100 flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                <button class="bg-[#4f46e5] text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-[#4338ca] transition shadow-lg shadow-indigo-100 flex items-center gap-2 active:scale-95">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                     Add New Record
                 </button>
             </div>
 
-            {{-- Filter Bar --}}
-            <div class="bg-white p-4 rounded-t-2xl border border-gray-100 flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div class="relative w-full md:w-96">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </span>
-                    <input type="text" placeholder="Search by name, ID, or course..." class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
-                </div>
+            {{-- Table & Filter Container --}}
+            <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
                 
-                <div class="flex gap-3 w-full md:w-auto">
-                    <select class="bg-gray-50 border-none rounded-xl text-sm px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer">
-                        <option>All Year Levels</option>
-                        <option>Grade 11</option>
-                        <option>Grade 12</option>
-                        <option>1st Year College</option>
-                    </select>
+                {{-- Filter Bar --}}
+                <div class="p-6 border-b border-slate-50 flex flex-col md:flex-row gap-4 items-center justify-between bg-[#fcfcfc]">
+                    <div class="relative w-full md:w-96">
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </span>
+                        <input type="text" placeholder="Search by name, ID, or course..." class="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
+                    </div>
+                    
+                    <div class="flex gap-3 w-full md:w-auto">
+                        <select class="bg-white border border-slate-200 rounded-xl text-sm px-6 py-3 focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer font-semibold text-slate-600">
+                            <option>All Year Levels</option>
+                            <option>Grade 11</option>
+                            <option>Grade 12</option>
+                            <option>1st Year College</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            {{-- Table Container --}}
-            <div class="bg-white border border-gray-100 rounded-b-2xl overflow-hidden shadow-sm">
+                {{-- Table Body --}}
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-gray-50/50 border-b border-gray-100">
-                                <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Student ID</th>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Full Name</th>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Course / Strand</th>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Actions</th>
+                            <tr class="bg-white">
+                                <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-[0.15em]">Student ID</th>
+                                <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-[0.15em]">Full Name</th>
+                                <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-[0.15em]">Course / Strand</th>
+                                <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-[0.15em]">Status</th>
+                                <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-[0.15em] text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-50">
-                            {{-- Row Example --}}
-                            <tr class="hover:bg-indigo-50/30 transition-colors group">
-                                <td class="px-6 py-4">
+                        <tbody class="divide-y divide-slate-50">
+                            <tr class="hover:bg-slate-50/80 transition-colors group">
+                                <td class="px-8 py-6">
                                     <span class="text-sm font-bold text-indigo-600 tracking-tight">2024-0012</span>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-[10px] font-bold text-indigo-700">TR</div>
-                                        <span class="text-sm font-semibold text-gray-700">Teodoro Repizo</span>
+                                <td class="px-8 py-6">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-xs font-black text-indigo-600 border border-indigo-100">TR</div>
+                                        <span class="text-sm font-bold text-slate-700">Teodoro Repizo</span>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-500 font-medium">BS Information Technology</td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2.5 py-1 bg-green-50 text-green-600 text-[10px] font-bold rounded-full border border-green-100 uppercase tracking-wider">Enrolled</span>
+                                <td class="px-8 py-6 text-sm text-slate-500 font-semibold">BS Information Technology</td>
+                                <td class="px-8 py-6">
+                                    <span class="px-4 py-1.5 bg-green-50 text-green-600 text-[10px] font-black rounded-lg border border-green-100 uppercase tracking-widest">Enrolled</span>
                                 </td>
-                                <td class="px-6 py-4 text-right">
-                                    <button onclick="viewStudentRecord('Teodoro Repizo', '2024-0012', 'BSIT', 'Enrolled')" class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-white rounded-lg transition shadow-none hover:shadow-sm">
+                                <td class="px-8 py-6 text-right">
+                                    <button onclick="viewStudentRecord('Teodoro Repizo', '2024-0012', 'BS Information Technology', 'Enrolled')" class="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                     </button>
                                 </td>
@@ -89,11 +97,11 @@
                 </div>
                 
                 {{-- Pagination Footer --}}
-                <div class="px-6 py-4 border-t border-gray-50 flex justify-between items-center bg-gray-50/30">
-                    <span class="text-xs text-gray-500 font-medium">Showing 1 entries</span>
+                <div class="px-8 py-6 border-t border-slate-50 flex justify-between items-center bg-[#fcfcfc]">
+                    <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Showing 1 entries</span>
                     <div class="flex gap-2">
-                        <button class="px-4 py-2 text-xs font-bold text-gray-400 bg-white border border-gray-200 rounded-xl cursor-not-allowed">Prev</button>
-                        <button class="px-4 py-2 text-xs font-bold text-indigo-600 bg-white border border-indigo-100 rounded-xl hover:bg-indigo-50 transition">Next</button>
+                        <button class="px-5 py-2 text-[11px] font-black uppercase text-slate-300 bg-white border border-slate-100 rounded-xl cursor-not-allowed">Prev</button>
+                        <button class="px-5 py-2 text-[11px] font-black uppercase text-indigo-600 bg-white border border-indigo-100 rounded-xl hover:bg-indigo-50 transition active:scale-95">Next</button>
                     </div>
                 </div>
             </div>
@@ -101,31 +109,33 @@
     </main>
 
     {{-- Record Detail Modal --}}
-    <div id="recordModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-opacity">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl transform transition-all scale-95 opacity-0 duration-300" id="modalContainer">
-            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                <h2 class="text-lg font-bold text-gray-800">Student Profile</h2>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+    <div id="recordModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl transform transition-all scale-95 opacity-0 duration-300 overflow-hidden" id="modalContainer">
+            <div class="p-8 border-b border-slate-50 flex justify-between items-center">
+                <h2 class="text-2xl font-black text-slate-800 tracking-tight">Student Profile</h2>
+                <button onclick="closeModal()" class="text-slate-300 hover:text-slate-500 text-3xl leading-none">&times;</button>
             </div>
-            <div class="p-8 text-center">
-                <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold text-indigo-600" id="profileInitial"></div>
-                <h3 class="text-xl font-bold text-gray-900" id="modalName"></h3>
-                <p class="text-sm text-gray-500 mb-6" id="modalID"></p>
+            
+            <div class="p-10 text-center">
+                <div class="w-24 h-24 bg-indigo-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-2xl font-black text-indigo-600 border border-indigo-100" id="profileInitial"></div>
+                <h3 class="text-2xl font-black text-slate-900 tracking-tight" id="modalName"></h3>
+                <p class="text-sm font-bold text-indigo-600 mt-1" id="modalID"></p>
                 
-                <div class="grid grid-cols-2 gap-4 text-left border-t border-gray-50 pt-6">
+                <div class="grid grid-cols-2 gap-6 text-left border-t border-slate-50 mt-8 pt-8">
                     <div>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Course</p>
-                        <p id="modalCourse" class="text-sm font-semibold text-gray-700"></p>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Course Program</p>
+                        <p id="modalCourse" class="text-sm font-bold text-slate-700 mt-1"></p>
                     </div>
                     <div>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</p>
-                        <p id="modalStatus" class="text-sm font-semibold text-green-600"></p>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Status</p>
+                        <p id="modalStatus" class="text-sm font-black text-green-600 mt-1 uppercase tracking-wider"></p>
                     </div>
                 </div>
             </div>
-            <div class="p-6 bg-gray-50 rounded-b-2xl flex flex-col gap-2">
-                <button class="w-full py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition">View Full Academic Records</button>
-                <button onclick="closeModal()" class="w-full py-2.5 text-sm font-bold text-gray-500 hover:bg-gray-200 rounded-xl transition">Close</button>
+
+            <div class="p-8 bg-slate-50 flex flex-col gap-3">
+                <button class="w-full py-4 bg-[#7f0000] text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-[#600000] transition shadow-lg shadow-maroon-100 active:scale-95">View Full Academic Records</button>
+                <button onclick="closeModal()" class="w-full py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition">Close Preview</button>
             </div>
         </div>
     </div>
@@ -136,10 +146,13 @@
             const container = document.getElementById('modalContainer');
 
             document.getElementById('modalName').innerText = name;
-            document.getElementById('modalID').innerText = "ID: " + id;
+            document.getElementById('modalID').innerText = "STUDENT ID: " + id;
             document.getElementById('modalCourse').innerText = course;
             document.getElementById('modalStatus').innerText = status;
-            document.getElementById('profileInitial').innerText = name.split(' ').map(n => n[0]).join('');
+            
+            // Handle multiple names for initials
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('profileInitial').innerText = initials;
 
             modal.classList.remove('hidden');
             setTimeout(() => {
