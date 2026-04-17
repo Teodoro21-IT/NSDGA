@@ -176,7 +176,9 @@
 </head>
 <body>
 <!-- NAVIGATION -->
-  <x-navbar />
+ <x-user-homepage.navbar />
+
+
 
 
 <div class="calendar-hero">

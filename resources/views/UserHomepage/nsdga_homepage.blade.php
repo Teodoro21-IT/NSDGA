@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
   <title>Nuestra Señora De Guia Academy of Marikina</title>
   <link rel="stylesheet" href="{{ asset('css/legacy/homepage.css') }}">
   <style>
@@ -157,7 +157,7 @@
 <body>
 
   <!-- NAVIGATION -->
- <x-navbar />
+<x-user-homepage.navbar />
 
   <!-- HERO -->
   <div class="hero">

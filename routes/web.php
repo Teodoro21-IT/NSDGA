@@ -75,13 +75,31 @@ Route::middleware(['auth', 'registrar'])->prefix('registrar')->group(function ()
         return view('registrar.registrar_dashboard');
     })->name('registrar_dashboard');
 
+    // New Sidebar Routes
+    Route::get('/registrar/applications', function () {
+        return view('registrar.application');
+    })->name('registrar.applications');
+
+    Route::get('/registrar/documents', function () {
+        return view('registrar.documents');
+    })->name('registrar.documents');
+
+    Route::get('/registrar/student-records', function () {
+        return view('registrar.student_record');
+    })->name('registrar.student_records');
+
+    Route::get('/registrar/profile', function () {
+        return view('registrar.my_profile');
+    })->name('registrar.profile');
+    
     Route::get('/change-password', [PasswordController::class, 'showRegistrar'])
         ->name('registrar.password.show');
     
     Route::post('/change-password', [PasswordController::class, 'updateRegistrar'])
         ->name('registrar.password.update');
 
-    // Add your other registrar routes here (Enrollment, Student Files, Certifications)
+    
+
 });
 
 Route::middleware(['student'])->group(function () {

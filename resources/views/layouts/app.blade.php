@@ -10,36 +10,10 @@
 </head>
 <body class="bg-[#F3F4F6] min-h-screen flex text-slate-800">
 
-    <aside class="w-64 bg-slate-900 text-white hidden md:flex flex-col sticky top-0 h-screen shadow-2xl">
-        <div class="p-8">
-            <h1 class="text-2xl font-black tracking-tighter text-white">NSDGA<span class="text-indigo-400">.</span></h1>
-            <p class="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mt-1">Registrar Office</p>
-        </div>
+    @include('components.registrar.registrar-sidebar')
 
-        <nav class="flex-1 px-4 space-y-1">
-            <a href="{{ route('registrar_dashboard') }}"
-                class="flex items-center space-x-3 p-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition">
-                <span class="text-lg">📋</span>
-                <span>Dashboard</span>
-            </a>
-            <a href="{{ route('registrar.password.show') }}"
-                class="flex items-center space-x-3 p-3 rounded-xl bg-indigo-600 text-white font-semibold shadow-lg transition">
-                <span class="text-lg">🔒</span>
-                <span>Settings</span>
-            </a>
-        </nav>
-
-        <div class="p-6 border-t border-slate-800">
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="w-full flex items-center justify-center space-x-2 p-3 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-xl transition-all font-bold text-xs uppercase tracking-widest">
-                    <span>Logout</span>
-                </button>
-            </form>
-        </div>
-    </aside>
-
-    <main class="flex-1">
+    <main class="flex-1 flex flex-col min-h-screen">
+        
         <header class="bg-white/90 backdrop-blur-sm border-b border-slate-200 p-5 flex justify-between items-center sticky top-0 z-50">
             <h2 class="text-lg font-bold tracking-tight text-slate-700">Change Password</h2>
             <div class="flex items-center space-x-4">
@@ -53,7 +27,7 @@
             </div>
         </header>
 
-        <div class="p-8 max-w-xl mx-auto">
+        <div class="p-8 max-w-xl mx-auto w-full">
             <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
                 <h3 class="text-2xl font-black text-slate-900 mb-6">Update Your Password</h3>
 

@@ -11,7 +11,9 @@
   
 
   <!-- NAV -->
-  <x-navbar />
+  <x-user-homepage.navbar />
+
+
 
   <!-- CONTENT -->
   <div class="page-content">

@@ -10,7 +10,8 @@
 </head>
 <body>
 
-    <x-navbar />
+  <x-user-homepage.navbar />
+
 
     <div class="page-content">
         <div class="page-heading">

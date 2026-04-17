@@ -236,7 +236,8 @@
 
 <!-- NAVIGATION -->
 
-<x-navbar />
+<x-user-homepage.navbar />
+
 
 <!-- HERO -->
 <div class="hero">

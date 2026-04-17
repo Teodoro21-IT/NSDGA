@@ -3,43 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NSDGA | Change Password</title>
+    <title>NSDGA | Dashboard</title>
     @vite(['resources/css/app.css'])
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Inter', sans-serif; } </style>
+    <style> 
+        body { font-family: 'Inter', sans-serif; } 
+        
+        .main-content { margin-left: 260px; } 
+    </style>
 </head>
-<body class="bg-[#F3F4F6] min-h-screen flex text-slate-800">
+<body class="bg-[#F3F4F6] min-h-screen text-slate-800">
 
-    <aside class="w-64 bg-slate-900 text-white hidden md:flex flex-col sticky top-0 h-screen shadow-2xl">
-        <div class="p-8">
-            <h1 class="text-2xl font-black tracking-tighter text-white">NSDGA<span class="text-indigo-400">.</span></h1>
-            <p class="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mt-1">Registrar Office</p>
-        </div>
+    {{-- The Fixed Sidebar --}}
+    @include('components.registrar.registrar-sidebar')
 
-        <nav class="flex-1 px-4 space-y-1">
-            <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition">
-                <span class="text-lg">📋</span>
-                <span>Dashboard</span>
-            </a>
-           
-            <a href="{{ route('registrar.password.show') }}" class="flex items-center space-x-3 p-3 rounded-xl bg-indigo-600 text-white font-semibold shadow-lg shadow-indigo-900/20 transition">
-                <span class="text-lg">🔒</span>
-                <span>Settings</span>
-            </a>
-        </nav>
-
-        <div class="p-6 border-t border-slate-800">
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="w-full flex items-center justify-center space-x-2 p-3 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-xl transition-all font-bold text-xs uppercase tracking-widest">
-                    <span>Logout</span>
-                </button>
-            </form>
-        </div>
-    </aside>
-
-    <main class="flex-1 flex flex-col min-h-screen">
-        <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-10 p-4 px-8 flex justify-between items-center">
+    {{-- Main Content Area --}}
+    <main class="main-content flex flex-col min-h-screen">
+        
+        {{-- Fixed Header --}}
+        <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 p-4 px-8 flex justify-between items-center">
             <div>
                 <h2 class="text-sm font-medium text-slate-500">Welcome back,</h2>
                 <p class="text-lg font-bold text-slate-900">Registrar Administrator</p>
@@ -52,8 +34,10 @@
             </div>
         </header>
 
+        {{-- Dashboard Content --}}
         <div class="p-8 space-y-8">
             
+            {{-- Stats Cards --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition">
                     <div class="flex items-center justify-between mb-4">
@@ -83,8 +67,10 @@
                 </div>
             </div>
 
+            {{-- Bottom Section --}}
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
+                {{-- Table --}}
                 <div class="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
                     <div class="p-6 border-b border-slate-50 flex justify-between items-center">
                         <h3 class="font-bold text-slate-800">Recent Enrollment Applications</h3>
@@ -104,17 +90,13 @@
                                 <tr class="hover:bg-slate-50/50 transition">
                                     <td class="px-6 py-4 font-medium text-slate-700">Julianne Moore</td>
                                     <td class="px-6 py-4 text-slate-500">BS Computer Science</td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold">Pending</span>
-                                    </td>
+                                    <td class="px-6 py-4"><span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold">Pending</span></td>
                                     <td class="px-6 py-4 text-right text-slate-400 text-xs">Apr 12, 2026</td>
                                 </tr>
                                 <tr class="hover:bg-slate-50/50 transition">
                                     <td class="px-6 py-4 font-medium text-slate-700">Marcus Wright</td>
                                     <td class="px-6 py-4 text-slate-500">AB Communication</td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Approved</span>
-                                    </td>
+                                    <td class="px-6 py-4"><span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Approved</span></td>
                                     <td class="px-6 py-4 text-right text-slate-400 text-xs">Apr 11, 2026</td>
                                 </tr>
                             </tbody>
@@ -122,6 +104,7 @@
                     </div>
                 </div>
 
+                {{-- Sidebar Actions --}}
                 <div class="space-y-6">
                     <div class="bg-indigo-900 rounded-3xl p-6 text-white shadow-xl shadow-indigo-200 relative overflow-hidden">
                         <div class="relative z-10">
@@ -146,7 +129,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </main>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>NSDGA | Login</title>
     @vite(['resources/css/app.css'])
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -11,9 +12,12 @@
         .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
     </style>
 </head>
+
+
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 min-h-screen flex items-center justify-center p-6">
     <div class="w-full max-w-[400px] animate-fade-in-up">
         <div class="text-center mb-8">
+            
             <h1 class="text-4xl font-extrabold text-white tracking-tighter">NSDGA <span class="text-blue-400">.</span></h1>
             <p class="text-slate-400 text-sm mt-2 font-medium">School Management System</p>
         </div>
@@ -23,6 +27,7 @@
                 <h2 class="text-2xl font-bold text-slate-800 mb-2">Welcome Back</h2>
                 <p class="text-slate-500 text-sm mb-8">Please enter your details to sign in.</p>
 <form action="{{ url('/login') }}" method="POST" class="space-y-6">
+    
     @csrf
 
     {{-- Combined Error Display --}}

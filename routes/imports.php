@@ -12,4 +12,5 @@ Route::middleware('web')->group(function () {
     Route::view('/shs-oncampus', 'UserHomepage.shsOnCampus');
     Route::view('/about', 'UserHomepage.about');
     Route::view('/school-calendar', 'UserHomepage.schoolcalendar');
+ 
 });

@@ -9,7 +9,8 @@
 <body>
 
 <!-- NAVIGATION -->
-  <x-navbar />
+<x-user-homepage.navbar />
+
 
 
   <div class="page-content">
