@@ -16,7 +16,10 @@ class StudentDocument extends Model
         'document_path',
     ];
 
-    public function enrollmentForm(): BelongsTo
+    /**
+     * Rename this function to studentEnrollmentForm to match your RegistrarController
+     */
+    public function studentEnrollmentForm(): BelongsTo
     {
         return $this->belongsTo(StudentEnrollmentForm::class, 'student_enrollment_form_id');
     }
