@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\AuditLog;
 use App\Http\Controllers\PasswordController;
 use App\Http\Middleware\RegistrarMiddleware;
+use App\Http\Controllers\RegistrarController;
 
 
 // --- Public Access ---
@@ -71,10 +72,9 @@ Route::middleware(['auth'])->group(function () {
   // --- REGISTRAR ONLY ROUTES ---
 Route::middleware(['auth', 'registrar'])->prefix('registrar')->group(function () {
     
-    Route::get('/dashboard', function () {
-        return view('registrar.registrar_dashboard');
-    })->name('registrar_dashboard');
+   Route::get('/dashboard', [RegistrarController::class, 'index'])->name('registrar_dashboard');
 
+    
     // New Sidebar Routes
     Route::get('/registrar/applications', function () {
         return view('registrar.application');
