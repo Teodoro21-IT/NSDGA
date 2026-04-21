@@ -76,49 +76,40 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
-<<<<<<< HEAD
 // --- REGISTRAR ONLY ROUTES ---
-Route::middleware(['auth', 'registrar'])->prefix('registrar')->group(function () {
-=======
-  // --- REGISTRAR ONLY ROUTES ---
+    Route::middleware(['auth', 'registrar'])->prefix('registrar')->group(function () {
+        
+        Route::get('/dashboard', [RegistrarController::class, 'index'])->name('registrar_dashboard');
+        Route::get('/applications', [RegistrarController::class, 'applications'])->name('registrar.applications');
+        
+        // View Application Profile
+        Route::get('/applications/{id}', [RegistrarController::class, 'showApplication'])->name('registrar.show');
 
+        // Student Records View
+        Route::get('/student-records/view/{id}', [RegistrarController::class, 'show'])->name('registrar.records.view');
+        Route::get('/student-records/view/{id}/alt', [RegistrarController::class, 'show'])->name('registrar.student_records.view');
 
-  Route::middleware(['auth', 'registrar'])->prefix('registrar')->group(function () {
->>>>>>> 180fcde344bbb839ba0ca68d47f0a0e384ae762c
-    
-    Route::get('/dashboard', [RegistrarController::class, 'index'])->name('registrar_dashboard');
-    Route::get('/applications', [RegistrarController::class, 'applications'])->name('registrar.applications');
-    
-    // View Application Profile
-    Route::get('/applications/{id}', [RegistrarController::class, 'showApplication'])->name('registrar.show');
+        // Document Management
+        Route::get('/documents', [RegistrarController::class, 'documentIndex'])->name('registrar.documents');
+        Route::post('/documents/update-status/{id}', [RegistrarController::class, 'updateDocumentStatus'])
+            ->name('registrar.documents.update_status');
 
-    // FIXED: Both names now point to the same view profile page
-    Route::get('/student-records/view/{id}', [RegistrarController::class, 'show'])->name('registrar.records.view');
-    Route::get('/student-records/view/{id}/alt', [RegistrarController::class, 'show'])->name('registrar.student_records.view');
+        // Alias for status update
+        Route::post('/documents/status-update/{id}', [RegistrarController::class, 'updateDocumentStatus'])
+            ->name('registrar.document.updateStatus');
 
-    // Document Management
-    Route::get('/documents', [RegistrarController::class, 'documentIndex'])->name('registrar.documents');
-    
-    // FIXED: This route now supports BOTH names used in your different blade files
-    Route::post('/documents/update-status/{id}', [RegistrarController::class, 'updateDocumentStatus'])
-        ->name('registrar.documents.update_status'); // Matches Applications page
+        // Enrollment and Records
+        Route::post('/enroll/{id}', [RegistrarController::class, 'enrollStudent'])->name('registrar.enroll');
+        Route::get('/student-records', [RegistrarController::class, 'studentRecords'])->name('registrar.student_records');
 
-    // ALIAS: Matches your Student Record View page (line 140)
-    Route::post('/documents/status-update/{id}', [RegistrarController::class, 'updateDocumentStatus'])
-        ->name('registrar.document.updateStatus');
+        // Notes and Feedback
+        Route::post('/student-records/notes/{id}', [RegistrarController::class, 'updateNotes'])->name('registrar.update_notes');
 
-    // Enrollment and Records
-    Route::post('/enroll/{id}', [RegistrarController::class, 'enrollStudent'])->name('registrar.enroll');
-    Route::get('/student-records', [RegistrarController::class, 'studentRecords'])->name('registrar.student_records');
-
-    // Notes and Feedback
-    Route::post('/student-records/notes/{id}', [RegistrarController::class, 'updateNotes'])->name('registrar.update_notes');
-
-    // Profile and Password
-    Route::get('/profile', function () { return view('registrar.my_profile'); })->name('registrar.profile');
-    Route::get('/change-password', [PasswordController::class, 'showRegistrar'])->name('registrar.password.show');
-    Route::post('/change-password', [PasswordController::class, 'updateRegistrar'])->name('registrar.password.update');
-});
+        // Profile and Password
+        Route::get('/profile', function () { return view('registrar.my_profile'); })->name('registrar.profile');
+        Route::get('/change-password', [PasswordController::class, 'showRegistrar'])->name('registrar.password.show');
+        Route::post('/change-password', [PasswordController::class, 'updateRegistrar'])->name('registrar.password.update');
+    });
 
 });
 
