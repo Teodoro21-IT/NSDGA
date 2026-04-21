@@ -27,63 +27,65 @@
                 <p class="text-slate-500 font-semibold mt-1 uppercase text-xs tracking-[0.2em]">Academic Year 2026-2027</p>
             </div>
 
-            {{-- Stats Grid --}}
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
-                
-                {{-- Annual Growth Comparison --}}
-                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4 relative overflow-hidden">
-                    <div class="w-14 h-14 bg-blue-50 rounded-2xl flex-shrink-0 flex items-center justify-center">
-                        <svg class="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                        </svg>
-                    </div>
-                    <div class="min-w-0">
-                        <div class="flex items-center gap-2">
-                            <p class="text-[32px] font-black text-slate-900 leading-none">{{ number_format($thisYearSubmissions) }}</p>
-                            @if($growth > 0)
-                                <span class="px-2 py-0.5 bg-green-100 text-green-600 text-[9px] font-black rounded-full uppercase">
-                                    +{{ number_format($growth, 1) }}%
-                                </span>
-                            @endif
-                        </div>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1 truncate">Annual Submissions</p>
-                        <p class="text-[9px] text-slate-300 font-bold uppercase tracking-tighter truncate">vs {{ $lastYearSubmissions }} in 2025</p>
-                    </div>
-                </div>
-
-                {{-- Total Pending (CLICKABLE) --}}
-                <a href="{{ route('registrar.applications') }}" class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4 hover:border-red-200 hover:shadow-md transition-all group">
-                    <div class="w-14 h-14 bg-red-50 rounded-2xl flex-shrink-0 flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                        <svg class="w-7 h-7 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a7 7 0 00-7 7v1h12v-1a7 7 0 00-7-7z"></path></svg>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-[32px] font-black text-slate-900 leading-none">{{ number_format($totalPending) }}</p>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1 truncate">Pending Apps</p>
-                    </div>
-                </a>
-
-                {{-- Documents for Review --}}
-                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
-                    <div class="w-14 h-14 bg-slate-50 rounded-2xl flex-shrink-0 flex items-center justify-center">
-                        <svg class="w-7 h-7 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"></path><path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"></path></svg>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-[32px] font-black text-slate-900 leading-none">{{ number_format($docsForReview) }}</p>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1 truncate">Docs for Review</p>
-                    </div>
-                </div>
-
-                {{-- Urgent Tasks --}}
-                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4 relative overflow-hidden">
-                    <div class="w-14 h-14 {{ $urgentTasks > 0 ? 'bg-orange-50' : 'bg-slate-50' }} rounded-2xl flex-shrink-0 flex items-center justify-center">
-                        <svg class="w-7 h-7 {{ $urgentTasks > 0 ? 'text-orange-500' : 'text-slate-400' }}" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-[32px] font-black text-slate-900 leading-none">{{ $urgentTasks }}</p>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1 truncate">Urgent Tasks</p>
-                    </div>
-                </div>
+           {{-- Stats Grid --}}
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
+    
+    {{-- Annual Growth Comparison --}}
+    <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4 relative overflow-hidden">
+        <div class="w-14 h-14 bg-blue-50 rounded-2xl flex-shrink-0 flex items-center justify-center">
+            <svg class="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+            </svg>
+        </div>
+        <div class="min-w-0">
+            <div class="flex items-center gap-2">
+                <p class="text-[32px] font-black text-slate-900 leading-none">{{ number_format($thisYearSubmissions) }}</p>
+                @if($growth > 0)
+                    <span class="px-2 py-0.5 bg-green-100 text-green-600 text-[9px] font-black rounded-full uppercase">
+                        +{{ number_format($growth, 1) }}%
+                    </span>
+                @endif
             </div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1 truncate">Total Submissions</p>
+        </div>
+    </div>
+
+    {{-- Total Pending --}}
+    <a href="{{ route('registrar.applications') }}" class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4 hover:border-red-200 hover:shadow-md transition-all group">
+        <div class="w-14 h-14 bg-red-50 rounded-2xl flex-shrink-0 flex items-center justify-center group-hover:bg-red-100 transition-colors">
+            <svg class="w-7 h-7 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a7 7 0 00-7 7v1h12v-1a7 7 0 00-7-7z"></path></svg>
+        </div>
+        <div class="min-w-0">
+            <p class="text-[32px] font-black text-slate-900 leading-none">{{ number_format($totalPending) }}</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1 truncate">Pending Apps</p>
+        </div>
+    </a>
+
+    {{-- Documents for Review (NOW CLICKABLE) --}}
+    <a href="{{ route('registrar.documents') }}" class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4 hover:border-indigo-200 hover:shadow-md transition-all group">
+        <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex-shrink-0 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
+            <svg class="w-7 h-7 text-indigo-500" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"></path>
+                <path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"></path>
+            </svg>
+        </div>
+        <div class="min-w-0">
+            <p class="text-[32px] font-black text-slate-900 leading-none">{{ number_format($docsForReview) }}</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1 truncate">Docs for Review</p>
+        </div>
+    </a>
+
+    {{-- Urgent Tasks --}}
+    <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4 relative overflow-hidden">
+        <div class="w-14 h-14 {{ $urgentTasks > 0 ? 'bg-orange-50' : 'bg-slate-50' }} rounded-2xl flex-shrink-0 flex items-center justify-center">
+            <svg class="w-7 h-7 {{ $urgentTasks > 0 ? 'text-orange-500' : 'text-slate-400' }}" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+        </div>
+        <div class="min-w-0">
+            <p class="text-[32px] font-black text-slate-900 leading-none">{{ $urgentTasks }}</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1 truncate">Urgent Tasks</p>
+        </div>
+    </div>
+</div>
 
             {{-- Newest Applications Table Section --}}
             <div class="flex justify-between items-center mb-6">

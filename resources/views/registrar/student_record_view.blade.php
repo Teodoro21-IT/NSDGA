@@ -8,14 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style> 
         body { font-family: 'Inter', sans-serif; }
-        
-        /* Layout Styles */
         .section-label { @apply text-[11px] font-black text-[#B08968] uppercase tracking-[0.2em] mb-4 block; }
         .input-wrapper { @apply flex flex-col gap-1; }
         .field-label { @apply text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1; }
         .display-box { @apply w-full px-4 py-2.5 bg-[#FDFDFD] border border-slate-200 rounded-lg text-slate-700 text-sm font-medium; }
         
-        /* PRINT LOGIC */
         @media print {
             .no-print { display: none !important; }
             .print-only { display: block !important; }
@@ -39,6 +36,7 @@
 
         <div class="max-w-6xl mx-auto content-container">
             
+            {{-- Header Section --}}
             <div class="flex justify-between items-start mb-8">
                 <div>
                     <div class="print-only mb-6 border-b-2 border-slate-900 pb-4">
@@ -46,7 +44,9 @@
                         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Official Student Master Record</p>
                     </div>
 
-                    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}</h1>
+                    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
+                        {{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}
+                    </h1>
                     <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1">
                         APP-{{ $student->created_at->format('Y') }}-{{ str_pad($student->id, 4, '0', STR_PAD_LEFT) }} • Incoming {{ $student->grade_level_applying_for }}
                     </p>
@@ -66,7 +66,7 @@
                 </div>
             </div>
 
-            {{-- Personal Information --}}
+            {{-- Personal Information Section --}}
             <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 mb-6">
                 <span class="section-label">Personal Information</span>
                 
@@ -76,15 +76,16 @@
                     <div class="input-wrapper"><label class="field-label">Last Name</label><div class="display-box">{{ $student->last_name }}</div></div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-6 mb-6">
-                    <div class="input-wrapper"><label class="field-label">LRN (12-digit)</label><div class="display-box">{{ $student->lrn ?? '136676090147' }}</div></div>
-                    <div class="input-wrapper"><label class="field-label">Sex</label><div class="display-box">{{ $student->sex }}</div></div>
-                    <div class="input-wrapper"><label class="field-label">Age</label><div class="display-box">{{ \Carbon\Carbon::parse($student->date_of_birth)->age }}</div></div>
+                <div class="grid grid-cols-4 gap-6 mb-6">
+                    <div class="input-wrapper"><label class="field-label">LRN (12-digit)</label><div class="display-box font-mono">{{ $student->lrn ?? 'NOT ASSIGNED' }}</div></div>
+                    <div class="input-wrapper"><label class="field-label">Sex</label><div class="display-box">{{ ucfirst($student->sex) }}</div></div>
+                    <div class="input-wrapper"><label class="field-label">Age</label><div class="display-box">{{ $student->age }}</div></div>
+                    <div class="input-wrapper"><label class="field-label">Nationality</label><div class="display-box">{{ $student->nationality ?? 'N/A' }}</div></div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-6 mb-6">
-                    <div class="input-wrapper"><label class="field-label">Date of Birth</label><div class="display-box">{{ \Carbon\Carbon::parse($student->date_of_birth)->format('m/d/Y') }}</div></div>
-                    <div class="input-wrapper"><label class="field-label">Birthplace</label><div class="display-box">{{ $student->birthplace ?? 'Marikina City' }}</div></div>
+                    <div class="input-wrapper"><label class="field-label">Date of Birth</label><div class="display-box">{{ \Carbon\Carbon::parse($student->date_of_birth)->format('F d, Y') }}</div></div>
+                    <div class="input-wrapper"><label class="field-label">Birthplace</label><div class="display-box">{{ $student->birthplace ?? 'N/A' }}</div></div>
                 </div>
 
                 <div class="input-wrapper mb-6">
@@ -94,25 +95,38 @@
 
                 <div class="grid grid-cols-3 gap-6">
                     <div class="input-wrapper"><label class="field-label">Contact Number</label><div class="display-box">{{ $student->contact_number }}</div></div>
-                    <div class="input-wrapper"><label class="field-label">Grade Level Applying For</label><div class="display-box">{{ $student->grade_level_applying_for }}</div></div>
-                    <div class="input-wrapper"><label class="field-label">School Year</label><div class="display-box">2024-2025</div></div>
+                    <div class="input-wrapper"><label class="field-label">Student Type</label><div class="display-box uppercase">{{ $student->student_type ?? 'ENROLLED' }}</div></div>
+                    <div class="input-wrapper"><label class="field-label">School Year</label><div class="display-box">{{ $student->school_year }}</div></div>
                 </div>
             </div>
 
-            {{-- Academic Background --}}
+            {{-- Enrollment Details Section --}}
+            <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 mb-6">
+                <span class="section-label">Enrollment Details</span>
+                <div class="grid grid-cols-3 gap-6">
+                    <div class="input-wrapper"><label class="field-label">Grade Level Applying For</label><div class="display-box">{{ $student->grade_level_applying_for }}</div></div>
+                    <div class="input-wrapper"><label class="field-label">Course/Strand Interested</label><div class="display-box uppercase">{{ $student->course_strand_interested ?? 'N/A' }}</div></div>
+                    <div class="input-wrapper"><label class="field-label">Education Level</label><div class="display-box uppercase">{{ $student->education_level ?? 'N/A' }}</div></div>
+                </div>
+            </div>
+
+            {{-- Academic Background Section --}}
             <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 mb-6">
                 <span class="section-label">Academic Background</span>
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="input-wrapper"><label class="field-label">Previous School Attended</label><div class="display-box">{{ $student->previous_school ?? 'Biringan National High School' }}</div></div>
-                    <div class="input-wrapper"><label class="field-label">GWA</label><div class="display-box">{{ $student->gwa ?? '94.00' }}</div></div>
+                <div class="grid grid-cols-2 gap-6 mb-6">
+                    <div class="input-wrapper"><label class="field-label">Previous School Attended</label><div class="display-box">{{ $student->previous_school_attended ?? 'N/A' }}</div></div>
+                    <div class="input-wrapper"><label class="field-label">Last Grade/Year Level Completed</label><div class="display-box">{{ $student->last_grade_year_level_completed ?? 'N/A' }}</div></div>
+                </div>
+                <div class="grid grid-cols-4 gap-6">
+                    <div class="input-wrapper col-span-1"><label class="field-label">GWA</label><div class="display-box font-bold">{{ number_format($student->gwa, 2) }}</div></div>
                 </div>
             </div>
 
-            {{-- Document Registry with Verification Stages --}}
+            {{-- Document Registry Section --}}
             <div class="bg-[#F8FAFC] rounded-3xl p-8 border border-slate-100 mb-10">
                 <span class="section-label text-slate-400">Verified Documents Registry</span>
                 <div class="space-y-3">
-                    @foreach($documents as $doc)
+                    @forelse($documents as $doc)
                     <div class="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
                         <div class="flex items-center gap-4">
                             <div class="p-2 bg-slate-50 rounded-lg">
@@ -124,37 +138,17 @@
                         </div>
                         
                         <div class="flex items-center gap-3">
-                            {{-- Stage Indicator --}}
-                            @if($doc->document_status == 'verified')
-                                <span class="px-4 py-1 bg-green-100 text-green-600 text-[9px] font-black rounded-md uppercase tracking-wider">Verified</span>
-                            @elseif($doc->document_status == 'action_needed')
-                                <span class="px-4 py-1 bg-red-100 text-red-600 text-[9px] font-black rounded-md uppercase tracking-wider">Needs Correction</span>
-                            @else
-                                <span class="px-4 py-1 bg-indigo-100 text-indigo-600 text-[9px] font-black rounded-md uppercase tracking-wider">Under Review</span>
-                            @endif
-
-                            {{-- Action: View --}}
+                            <span class="px-4 py-1 bg-green-100 text-green-600 text-[9px] font-black rounded-md uppercase tracking-wider italic">Verified</span>
                             <a href="{{ asset('storage/' . $doc->document_path) }}" target="_blank" class="no-print px-4 py-1 bg-slate-100 text-slate-400 text-[9px] font-black rounded-md uppercase hover:bg-slate-200 transition">View File</a>
-
-                            {{-- Form to Approve --}}
-                            <form action="{{ route('registrar.document.updateStatus', $doc->id) }}" method="POST" class="no-print inline">
-                                @csrf
-                                <input type="hidden" name="document_status" value="verified">
-                                <button type="submit" class="px-4 py-1 bg-slate-100 text-slate-400 text-[9px] font-black rounded-md uppercase hover:bg-green-600 hover:text-white transition">Approve</button>
-                            </form>
-
-                            {{-- Form to mark for Correction --}}
-                            <form action="{{ route('registrar.document.updateStatus', $doc->id) }}" method="POST" class="no-print inline">
-                                @csrf
-                                <input type="hidden" name="document_status" value="action_needed">
-                                <button type="submit" class="px-4 py-1 bg-slate-100 text-slate-400 text-[9px] font-black rounded-md uppercase hover:bg-red-600 hover:text-white transition">Correct</button>
-                            </form>
                         </div>
                     </div>
-                    @endforeach
+                    @empty
+                    <p class="text-center text-xs font-bold text-slate-400 py-4 uppercase">No documents uploaded</p>
+                    @endforelse
                 </div>
             </div>
 
+            {{-- Print Footer --}}
             <div class="print-only mt-20">
                 <div class="flex justify-between">
                     <div class="text-center w-64 border-t-2 border-slate-900 pt-2">
@@ -166,7 +160,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </main>
 </body>

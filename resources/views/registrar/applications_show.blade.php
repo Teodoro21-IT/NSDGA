@@ -146,6 +146,8 @@
                             @php 
                                 $isMissing = $doc->document_status == 'not_uploaded';
                                 $isUnderReview = $doc->document_status == 'under_review';
+                                $isVerified = $doc->document_status == 'verified';
+                                $isActionNeeded = $doc->document_status == 'action_needed';
                             @endphp
                             <div class="flex items-center bg-[#F3F4F6]/50 p-4 rounded-2xl border border-slate-50 shadow-sm">
                                 <div class="flex-1 flex items-center gap-4">
@@ -162,7 +164,7 @@
                                 <div class="flex items-center gap-4">
                                     {{-- Status Badge --}}
                                     <span class="px-6 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest 
-                                        {{ $isMissing ? 'bg-red-100 text-red-500' : ($isUnderReview ? 'bg-blue-100 text-blue-500' : 'bg-green-100 text-green-500') }}">
+                                        {{ $isMissing || $isActionNeeded ? 'bg-red-100 text-red-500' : ($isUnderReview ? 'bg-blue-100 text-blue-500' : 'bg-green-100 text-green-500') }}">
                                         {{ str_replace('_', ' ', $doc->document_status) }}
                                     </span>
 
@@ -170,9 +172,19 @@
                                     <div class="flex gap-2">
                                         @if(!$isMissing)
                                             <a href="{{ asset('storage/' . $doc->document_path) }}" target="_blank" class="px-4 py-2 bg-slate-200 text-slate-600 text-[10px] font-black rounded-lg uppercase hover:bg-slate-300 transition">View</a>
-                                            <button class="px-4 py-2 bg-slate-200 text-slate-600 text-[10px] font-black rounded-lg uppercase hover:bg-green-500 hover:text-white transition">Approve</button>
+                                            
+                                            <form action="{{ route('registrar.documents.update_status', $doc->id) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="document_status" value="verified">
+                                                <button type="submit" class="px-4 py-2 bg-slate-200 text-slate-600 text-[10px] font-black rounded-lg uppercase hover:bg-green-500 hover:text-white transition {{ $isVerified ? 'hidden' : '' }}">Approve</button>
+                                            </form>
                                         @endif
-                                        <button class="px-4 py-2 bg-slate-200 text-slate-600 text-[10px] font-black rounded-lg uppercase hover:bg-red-500 hover:text-white transition">Correct</button>
+
+                                        <form action="{{ route('registrar.documents.update_status', $doc->id) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="document_status" value="action_needed">
+                                            <button type="submit" class="px-4 py-2 bg-slate-200 text-slate-600 text-[10px] font-black rounded-lg uppercase hover:bg-red-500 hover:text-white transition {{ $isActionNeeded ? 'hidden' : '' }}">Correct</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -183,16 +195,27 @@
                 {{-- Additional Notes Section --}}
                 <div class="bg-white p-10 rounded-[32px] shadow-sm border border-slate-100">
                     <h3 class="text-[11px] font-black text-slate-300 uppercase tracking-[0.3em] mb-6">Additional Notes for Student</h3>
-                    <div class="bg-[#F3F4F6] rounded-2xl p-6 border border-slate-100">
-                        <textarea placeholder="Enter feedback or requested corrections here..." 
-                            class="w-full bg-transparent text-sm font-medium text-slate-600 focus:outline-none resize-none" rows="5"></textarea>
-                    </div>
-                    <div class="mt-4 flex items-center gap-2 text-slate-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p class="text-[10px] font-bold italic">Student will be notified immediately upon submission.</p>
-                    </div>
+                    
+                    <form action="{{ route('registrar.update_notes', $student->id) }}" method="POST">
+                        @csrf
+                        <div class="bg-[#F3F4F6] rounded-2xl p-6 border border-slate-100">
+                            <textarea name="notes" placeholder="Enter feedback or requested corrections here..." 
+                                class="w-full bg-transparent text-sm font-medium text-slate-600 focus:outline-none resize-none" rows="5">{{ $student->registrar_notes }}</textarea>
+                        </div>
+                        
+                        <div class="mt-4 flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <p class="text-[10px] font-bold italic">Student will be notified immediately upon clicking Save.</p>
+                            </div>
+                            
+                            <button type="submit" class="px-8 py-3 bg-slate-900 text-white font-black rounded-xl text-[10px] uppercase tracking-widest hover:bg-black transition">
+                                Save Notes & Notify
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
             </div>
