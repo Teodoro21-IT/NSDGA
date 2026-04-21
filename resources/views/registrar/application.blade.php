@@ -80,7 +80,7 @@
             </form>
             
 
-            {{-- Table View --}}
+           {{-- Table View --}}
             <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -99,7 +99,6 @@
                             <td class="px-8 py-5">
                                 <p class="font-bold text-slate-800 group-hover:text-[#7f0000] transition">{{ $app->first_name }} {{ $app->last_name }}</p>
                             </td>
-                            {{-- Added Grade Level Column --}}
                             <td class="px-8 py-5 text-sm font-bold text-slate-600">
                                 {{ $app->grade_level_applying_for }}
                             </td>
@@ -124,6 +123,25 @@
                         @endforelse
                     </tbody>
                 </table>
+
+                {{-- NEW: Pagination Section --}}
+                @if($newestApplications->hasPages())
+                <div class="px-8 py-6 bg-slate-50/30 border-t border-slate-100">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                        {{-- Data Summary --}}
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">
+                            Showing <span class="text-slate-600">{{ $newestApplications->firstItem() }}</span> 
+                            to <span class="text-slate-600">{{ $newestApplications->lastItem() }}</span> 
+                            of <span class="text-slate-600">{{ $newestApplications->total() }}</span> Applications
+                        </p>
+
+                        {{-- Pagination Buttons --}}
+                        <div class="registrar-pagination">
+                            {{ $newestApplications->links() }}
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </main>

@@ -3,82 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pending Documents | Registrar Access</title>
+    <title>NSDGA | Document Review</title>
     @vite(['resources/css/app.css'])
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Inter', sans-serif; } </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
+
 <body class="bg-[#F8F9FA] min-h-screen flex text-slate-800">
 
-    {{-- Sidebar --}}
-    <div class="no-print">
-        @include('components.registrar.registrar-sidebar')
-    </div>
+    @include('components.registrar.registrar-sidebar')
     
-    <main class="flex-1 ml-[260px] p-10 pt-24 transition-all duration-300">
-        {{-- Navbar --}}
-        <div class="no-print">
-            @include('components.registrar.registrar-navbar')
-        </div>
+    <main class="flex-1 flex flex-col min-h-screen ml-[260px]">
+        @include('components.registrar.registrar-navbar')
 
-        <div class="max-w-6xl mx-auto">
+        <div class="p-10 pt-24 w-full">
             <div class="mb-8">
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Document Review </h1>
-                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1">
-                    Manage and verify student uploads
-                </p>
+                <h1 class="text-[32px] font-extrabold text-[#7f0000] tracking-tight">Document Review</h1>
+                <p class="text-slate-500 font-medium">Manage and verify student uploads in the verification queue.</p>
             </div>
-            
-            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-                <table class="w-full text-left">
-                    <thead class="bg-slate-50 border-b border-slate-100">
-                        <tr>
-                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Student Name</th>
-                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Uploaded Documents</th>
-                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Overall Status</th>
-                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+
+            {{-- Search Bar --}}
+            <form action="{{ route('registrar.documents') }}" method="GET" class="mb-8 max-w-md">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </span>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search student name..." 
+                        class="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#7f0000]/20 outline-none text-sm font-medium transition-all">
+                </div>
+            </form>
+
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/50 border-b border-slate-100">
+                            <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest">Student Name</th>
+                            <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">Uploaded Documents</th>
+                            <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
+                            <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50">
-                        {{-- Iterate over the grouped documents (grouped by student_enrollment_form_id) --}}
-                        @forelse($documents as $studentId => $studentDocs)
-                        @php
-                            // Get the first document to access the student's name info
-                            $firstDoc = $studentDocs->first();
-                            // Check if any document for this student needs correction
-                            $needsCorrectionCount = $studentDocs->where('document_status', 'action_needed')->count();
-                        @endphp
+                        {{-- The $documents variable is now a paginated list of Students --}}
+                        @forelse($documents as $student)
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="px-8 py-5">
                                 <span class="text-sm font-bold text-slate-700 uppercase tracking-tight">
-                                    {{ $firstDoc->studentEnrollmentForm->first_name }} {{ $firstDoc->studentEnrollmentForm->last_name }}
+                                    {{ $student->first_name }} {{ $student->last_name }}
                                 </span>
                             </td>
                             <td class="px-8 py-5">
-                                <div class="flex flex-wrap gap-1.5">
-                                    @foreach($studentDocs as $doc)
-                                        <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[9px] font-bold rounded border border-slate-200 uppercase tracking-tighter">
+                                <div class="flex flex-wrap justify-center gap-2">
+                                    @foreach($student->documents as $doc)
+                                        <span class="px-2 py-1 bg-slate-100 border border-slate-200 rounded text-[9px] font-bold text-slate-500 uppercase">
                                             {{ str_replace('_', ' ', $doc->document_type) }}
                                         </span>
                                     @endforeach
                                 </div>
                             </td>
                             <td class="px-8 py-5 text-center">
-                                @if($needsCorrectionCount > 0)
-                                    <span class="px-3 py-1 bg-red-100 text-red-600 text-[9px] font-black rounded-md uppercase">
-                                        {{ $needsCorrectionCount }} Correction(s) Needed
-                                    </span>
-                                @else
-                                    <span class="px-3 py-1 bg-indigo-100 text-indigo-600 text-[9px] font-black rounded-md uppercase tracking-tighter">
-                                        Under Review
-                                    </span>
-                                @endif
+                                {{-- We check the student's document status from the relationship --}}
+                                @php
+                                    $needsAction = $student->documents->contains('document_status', 'action_needed');
+                                @endphp
+                                <span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider {{ $needsAction ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-700' }}">
+                                    {{ $needsAction ? 'Action Needed' : 'Under Review' }}
+                                </span>
                             </td>
                             <td class="px-8 py-5 text-right">
-                                {{-- Link to view the specific student record --}}
-                                <a href="{{ route('registrar.student_records.view', $studentId) }}" 
-                                   class="inline-flex items-center justify-center p-2 bg-slate-100 text-slate-400 rounded-lg hover:bg-[#7f0000] hover:text-white transition-all shadow-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <a href="{{ route('registrar.records.view', $student->id) }}" class="p-2 text-slate-400 hover:text-[#7f0000] transition inline-block">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                     </svg>
@@ -87,13 +82,20 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="px-8 py-20 text-center">
-                                <p class="text-slate-400 font-bold text-xs uppercase tracking-[0.2em]">No pending documents found</p>
+                            <td colspan="4" class="px-8 py-20 text-center text-slate-400 font-medium italic">
+                                No documents currently pending review.
                             </td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
+
+                {{-- Pagination Links --}}
+                @if($documents->hasPages())
+                <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100">
+                    {{ $documents->links() }}
+                </div>
+                @endif
             </div>
         </div>
     </main>

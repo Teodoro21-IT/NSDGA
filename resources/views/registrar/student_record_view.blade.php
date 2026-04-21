@@ -36,6 +36,13 @@
 
         <div class="max-w-6xl mx-auto content-container">
             
+            {{-- Success Notification --}}
+            @if(session('success'))
+                <div class="no-print mb-4 p-4 bg-green-500 text-white rounded-2xl font-bold text-sm shadow-lg">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             {{-- Header Section --}}
             <div class="flex justify-between items-start mb-8">
                 <div>
@@ -122,31 +129,83 @@
                 </div>
             </div>
 
-            {{-- Document Registry Section --}}
-            <div class="bg-[#F8FAFC] rounded-3xl p-8 border border-slate-100 mb-10">
-                <span class="section-label text-slate-400">Verified Documents Registry</span>
-                <div class="space-y-3">
-                    @forelse($documents as $doc)
-                    <div class="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                        <div class="flex items-center gap-4">
-                            <div class="p-2 bg-slate-50 rounded-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                            </div>
-                            <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest">{{ str_replace('_', ' ', $doc->document_type) }}</span>
-                        </div>
-                        
-                        <div class="flex items-center gap-3">
-                            <span class="px-4 py-1 bg-green-100 text-green-600 text-[9px] font-black rounded-md uppercase tracking-wider italic">Verified</span>
-                            <a href="{{ asset('storage/' . $doc->document_path) }}" target="_blank" class="no-print px-4 py-1 bg-slate-100 text-slate-400 text-[9px] font-black rounded-md uppercase hover:bg-slate-200 transition">View File</a>
-                        </div>
-                    </div>
-                    @empty
-                    <p class="text-center text-xs font-bold text-slate-400 py-4 uppercase">No documents uploaded</p>
-                    @endforelse
+        {{-- Document Registry Section --}}
+<div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 mb-10">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <span class="section-label mb-1">Document Verification Queue</span>
+            <p class="text-[10px] text-slate-400 font-medium uppercase tracking-tight">Requirement Checklist & Status</p>
+        </div>
+        <div class="px-3 py-1 bg-slate-50 rounded-full border border-slate-100">
+            <span class="text-[10px] font-bold text-slate-500 uppercase">{{ $documents->count() }} Total Files</span>
+        </div>
+    </div>
+
+    <div class="space-y-3">
+        @forelse($documents as $doc)
+        <div class="flex items-center justify-between p-4 bg-[#FDFDFD] rounded-2xl border border-slate-100 hover:border-[#B08968]/30 transition-colors group">
+            <div class="flex items-center gap-4">
+                <div class="p-2.5 bg-white rounded-xl shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#B08968]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="text-[11px] font-black text-slate-700 uppercase tracking-widest block">{{ str_replace('_', ' ', $doc->document_type) }}</span>
+                    <span class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Reference ID: #DOC-{{ $doc->id }}</span>
                 </div>
             </div>
+            
+            <div class="flex items-center gap-4">
+                {{-- Status Badge --}}
+                <div class="flex flex-col items-end">
+                    @if($doc->document_status === 'verified')
+                        <span class="px-3 py-1 bg-green-50 text-green-600 text-[9px] font-black rounded-lg uppercase tracking-wider border border-green-100">✓ Verified</span>
+                    @elseif($doc->document_status === 'action_needed')
+                        <span class="px-3 py-1 bg-red-50 text-red-600 text-[9px] font-black rounded-lg uppercase tracking-wider border border-red-100">⚠ Action Needed</span>
+                    @else
+                        <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[9px] font-black rounded-lg uppercase tracking-wider border border-blue-100">○ Under Review</span>
+                    @endif
+                </div>
+
+                {{-- Action Buttons (No-Print) --}}
+                <div class="no-print flex items-center gap-2 ml-4 border-l pl-4 border-slate-100">
+                    <a href="{{ asset('storage/' . ($doc->file_path ?? $doc->document_path)) }}" 
+                       target="_blank" 
+                       class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition"
+                       title="View Document">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                    </a>
+
+                    <form action="{{ route('registrar.document.updateStatus', $doc->id) }}" method="POST" class="flex gap-1">
+                        @csrf
+                        @if($doc->document_status !== 'verified')
+                            <button type="submit" name="document_status" value="verified" 
+                                    class="px-3 py-1.5 bg-green-600 text-white text-[9px] font-black rounded-md uppercase hover:bg-green-700 transition shadow-sm">
+                                Approve
+                            </button>
+                        @endif
+
+                        @if($doc->document_status !== 'action_needed')
+                            <button type="submit" name="document_status" value="action_needed" 
+                                    class="px-3 py-1.5 bg-slate-800 text-white text-[9px] font-black rounded-md uppercase hover:bg-black transition shadow-sm">
+                                Reject
+                            </button>
+                        @endif
+                    </form>
+                </div>
+            </div>
+        </div>
+        @empty
+        <div class="text-center py-12 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-100">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">No Documents Submitted</p>
+        </div>
+        @endforelse
+    </div>
+</div>
 
             {{-- Print Footer --}}
             <div class="print-only mt-20">
