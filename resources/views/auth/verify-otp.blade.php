@@ -16,6 +16,13 @@
         <h2 class="text-2xl font-bold mb-2 text-slate-800">Security Verification</h2>
         <p class="text-slate-500 text-sm mb-6">Enter the 6-digit code sent to your phone.</p>
 
+        @if(session('student_otp_account_id'))
+            <div class="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-4 text-sm text-yellow-700">
+                It looks like you are in the student login flow. Please use the student OTP page instead.
+                <a href="{{ route('student.otp.view') }}" class="font-semibold text-blue-600 hover:text-blue-800">Go to student OTP verification</a>
+            </div>
+        @endif
+
         <form action="{{ route('otp.verify') }}" method="POST" class="space-y-6">
             @csrf
             @if($errors->any())
@@ -32,18 +39,18 @@
             <button type="submit" class="w-full bg-blue-600 text-white p-4 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition-all active:scale-[0.98]">
                 Verify & Login
             </button>
-            </button>
-    </form> <div class="mt-6 text-center border-t border-slate-100 pt-4">
-        <form action="{{ route('otp.resend') }}" method="POST">
-            @csrf
-            <p class="text-xs text-slate-500 mb-2 font-medium">Didn't receive the code?</p>
-            <button type="submit" class="text-blue-600 hover:text-blue-700 font-bold text-sm transition-all active:scale-95">
-                📩 Resend New Code
-            </button>
         </form>
+
+        <div class="mt-6 text-center border-t border-slate-100 pt-4">
+            <form action="{{ route('otp.resend') }}" method="POST">
+                @csrf
+                <p class="text-xs text-slate-500 mb-2 font-medium">Didn't receive the code?</p>
+                <button type="submit" class="text-blue-600 hover:text-blue-700 font-bold text-sm transition-all active:scale-95">
+                    📩 Resend New Code
+                </button>
+            </form>
+        </div>
     </div>
-</div> ```
-        </form>
-    </div>
+</div>
 </body>
 </html>

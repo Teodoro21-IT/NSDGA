@@ -49,14 +49,15 @@ class StudentEnrollmentController extends Controller
             'age' => ['required', 'integer', 'min:1', 'max:99'],
             'date_of_birth' => ['required', 'date'],
             'birthplace' => ['required', 'string', 'max:255'],
+            'nationality' => ['required', 'string', 'max:255'],
             'home_address' => ['required', 'string', 'max:1000'],
             'contact_number' => ['required', 'string', 'max:20'],
             'education_level' => ['required', 'in:elementary,highschool,seniorhigh'],
             'grade_level_applying_for' => ['required', 'string', 'max:100'],
-            'school_year' => ['required', 'regex:/^\d{4}-\d{4}$/'],
+            'school_year' => ['required', 'in:2024-2025,2025-2026,2027-2028'],
             'student_type' => ['required', 'in:new,transferee,returning'],
             'previous_school_attended' => ['nullable', 'string', 'max:255'],
-            'course_strand_interested' => ['nullable', 'string', 'max:255'],
+            'course_strand_interested' => ['nullable', 'required_if:education_level,seniorhigh', 'string', 'max:255'],
             'last_grade_year_level_completed' => ['required', 'string', 'max:100'],
             'gwa' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'two_by_two_picture' => ['nullable', 'file', 'image', 'max:2048'],
@@ -65,7 +66,7 @@ class StudentEnrollmentController extends Controller
             'psa_birth_certificate' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
             'good_moral' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
         ], [
-            'school_year.regex' => 'School year must be in YYYY-YYYY format (example: 2025-2026).',
+            'school_year.in' => 'School year must be one of: 2024-2025, 2025-2026, or 2027-2028.',
         ]);
 
         try {
@@ -80,6 +81,7 @@ class StudentEnrollmentController extends Controller
                     'age' => $validated['age'],
                     'date_of_birth' => $validated['date_of_birth'],
                     'birthplace' => $validated['birthplace'],
+                    'nationality' => $validated['nationality'],
                     'home_address' => $validated['home_address'],
                     'contact_number' => $validated['contact_number'],
                     'education_level' => $validated['education_level'],

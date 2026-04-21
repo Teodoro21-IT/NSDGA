@@ -23,7 +23,14 @@ Route::get('/student/login', [StudentLoginController::class, 'showLogin'])->name
 Route::post('/student/login', [StudentLoginController::class, 'login'])->name('student.login.submit');
 
 // --- OTP Verification (Guest/Authenticated) ---
-Route::get('/verify-otp', function () { return view('auth.verify-otp'); })->name('otp.view');
+Route::get('/verify-otp', function (Request $request) {
+    if ($request->session()->has('student_otp_account_id')) {
+        return redirect()->route('student.otp.view');
+    }
+
+    return view('auth.verify-otp');
+})->name('otp.view');
+
 Route::post('/verify-otp', [LoginController::class, 'verifyOtp'])->name('otp.verify')->middleware('throttle:3,1');
 Route::post('/resend-otp', [LoginController::class, 'resendOtp'])->name('otp.resend')->middleware('throttle:2,1');
 
@@ -69,7 +76,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
   // --- REGISTRAR ONLY ROUTES ---
-Route::middleware(['auth', 'registrar'])->prefix('registrar')->group(function () {
+
+
+  Route::middleware(['auth', 'registrar'])->prefix('registrar')->group(function () {
     
     Route::get('/dashboard', function () {
         return view('registrar.registrar_dashboard');
@@ -101,6 +110,10 @@ Route::middleware(['auth', 'registrar'])->prefix('registrar')->group(function ()
     
 
 });
+
+});
+
+//STUDENTSSSS YAA
 
 Route::middleware(['student'])->group(function () {
 
@@ -225,6 +238,4 @@ Route::middleware(['student'])->group(function () {
 
     Route::post('/student/logout', [StudentLoginController::class, 'logout'])->name('student.logout');
     
-});
-
 });

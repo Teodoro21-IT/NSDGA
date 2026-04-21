@@ -30,5 +30,19 @@ class StudentAccountsSeeder extends Seeder
                 'updated_at' => now(),
             ]
         );
+        DB::table('student_accounts')->updateOrInsert(
+            ['email' => 'KUPAK@gmail.com'],
+            [
+                'full_name' => 'student2 user',
+                'lrn' => '123456789011',
+                'education_level' => 'senior_high',
+                'password' => Hash::make('student2pass'),
+                'otp_code' => null,
+                'otp_expires_at' => null,
+                'is_locked' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
     }
 }
