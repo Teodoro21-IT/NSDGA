@@ -24,7 +24,14 @@ Route::get('/student/login', [StudentLoginController::class, 'showLogin'])->name
 Route::post('/student/login', [StudentLoginController::class, 'login'])->name('student.login.submit');
 
 // --- OTP Verification (Guest/Authenticated) ---
-Route::get('/verify-otp', function () { return view('auth.verify-otp'); })->name('otp.view');
+Route::get('/verify-otp', function (Request $request) {
+    if ($request->session()->has('student_otp_account_id')) {
+        return redirect()->route('student.otp.view');
+    }
+
+    return view('auth.verify-otp');
+})->name('otp.view');
+
 Route::post('/verify-otp', [LoginController::class, 'verifyOtp'])->name('otp.verify')->middleware('throttle:3,1');
 Route::post('/resend-otp', [LoginController::class, 'resendOtp'])->name('otp.resend')->middleware('throttle:2,1');
 
@@ -69,8 +76,15 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
+<<<<<<< HEAD
 // --- REGISTRAR ONLY ROUTES ---
 Route::middleware(['auth', 'registrar'])->prefix('registrar')->group(function () {
+=======
+  // --- REGISTRAR ONLY ROUTES ---
+
+
+  Route::middleware(['auth', 'registrar'])->prefix('registrar')->group(function () {
+>>>>>>> 180fcde344bbb839ba0ca68d47f0a0e384ae762c
     
     Route::get('/dashboard', [RegistrarController::class, 'index'])->name('registrar_dashboard');
     Route::get('/applications', [RegistrarController::class, 'applications'])->name('registrar.applications');
@@ -105,6 +119,10 @@ Route::middleware(['auth', 'registrar'])->prefix('registrar')->group(function ()
     Route::get('/change-password', [PasswordController::class, 'showRegistrar'])->name('registrar.password.show');
     Route::post('/change-password', [PasswordController::class, 'updateRegistrar'])->name('registrar.password.update');
 });
+
+});
+
+//STUDENTSSSS YAA
 
 Route::middleware(['student'])->group(function () {
 
@@ -229,6 +247,4 @@ Route::middleware(['student'])->group(function () {
 
     Route::post('/student/logout', [StudentLoginController::class, 'logout'])->name('student.logout');
     
-});
-
 });

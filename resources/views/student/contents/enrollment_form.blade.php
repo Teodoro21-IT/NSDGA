@@ -69,23 +69,33 @@
                     @error('lrn') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Sex <span class="text-red-500">*</span></label>
-                    <select name="sex" required class="w-full text-sm px-4 py-2.5 rounded-lg border focus:ring-2 focus:outline-none transition-colors 
-                        @error('sex') border-red-500 focus:ring-red-200 bg-red-50 @else border-gray-300 focus:border-[#800000] focus:ring-[#800000]/20 @enderror">
-                        <option value="">Select Sex</option>
-                        <option value="male" {{ old('sex') === 'male' ? 'selected' : '' }}>Male</option>
-                        <option value="female" {{ old('sex') === 'female' ? 'selected' : '' }}>Female</option>
-                    </select>
-                    @error('sex') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
+               <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Sex <span class="text-red-500">*</span></label>
+                        <select name="sex" required class="w-full text-sm px-3 py-2.5 rounded-lg border focus:ring-2 focus:outline-none transition-colors 
+                            @error('sex') border-red-500 focus:ring-red-200 bg-red-50 @else border-gray-300 focus:border-[#800000] focus:ring-[#800000]/20 @enderror">
+                            <option value="">Sex</option>
+                            <option value="male" {{ old('sex') === 'male' ? 'selected' : '' }}>Male</option>
+                            <option value="female" {{ old('sex') === 'female' ? 'selected' : '' }}>Female</option>
+                        </select>
+                        @error('sex') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Age <span class="text-red-500">*</span></label>
+                        <input type="number" name="age" value="{{ old('age') }}" required placeholder="e.g. 15"
+                            class="w-full text-sm px-3 py-2.5 rounded-lg border focus:ring-2 focus:outline-none transition-colors 
+                            @error('age') border-red-500 focus:ring-red-200 bg-red-50 @else border-gray-300 focus:border-[#800000] focus:ring-[#800000]/20 @enderror">
+                        @error('age') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
+                    </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Age <span class="text-red-500">*</span></label>
-                    <input type="number" name="age" value="{{ old('age') }}" required placeholder="e.g. 15"
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Nationality <span class="text-red-500">*</span></label>
+                    <input type="text" name="nationality" value="{{ old('nationality') }}" required placeholder="Enter nationality"
                         class="w-full text-sm px-4 py-2.5 rounded-lg border focus:ring-2 focus:outline-none transition-colors 
-                        @error('age') border-red-500 focus:ring-red-200 bg-red-50 @else border-gray-300 focus:border-[#800000] focus:ring-[#800000]/20 @enderror">
-                    @error('age') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
+                        @error('nationality') border-red-500 focus:ring-red-200 bg-red-50 @else border-gray-300 focus:border-[#800000] focus:ring-[#800000]/20 @enderror">
+                    @error('nationality') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
@@ -122,7 +132,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Education Level <span class="text-red-500">*</span></label>
-                    <select name="education_level" required class="w-full text-sm px-4 py-2.5 rounded-lg border focus:ring-2 focus:outline-none transition-colors 
+                    <select id="education_level" name="education_level" required class="w-full text-sm px-4 py-2.5 rounded-lg border focus:ring-2 focus:outline-none transition-colors 
                         @error('education_level') border-red-500 focus:ring-red-200 bg-red-50 @else border-gray-300 focus:border-[#800000] focus:ring-[#800000]/20 @enderror">
                         <option value="">Select Level</option>
                         <option value="elementary" {{ old('education_level') === 'elementary' ? 'selected' : '' }}>Elementary</option>
@@ -134,17 +144,36 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Grade Level Applying For <span class="text-red-500">*</span></label>
-                    <input type="text" name="grade_level_applying_for" value="{{ old('grade_level_applying_for') }}" required placeholder="e.g. Grade 7"
-                        class="w-full text-sm px-4 py-2.5 rounded-lg border focus:ring-2 focus:outline-none transition-colors 
+                    <select id="grade_level_applying_for" name="grade_level_applying_for" required class="w-full text-sm px-4 py-2.5 rounded-lg border focus:ring-2 focus:outline-none transition-colors 
                         @error('grade_level_applying_for') border-red-500 focus:ring-red-200 bg-red-50 @else border-gray-300 focus:border-[#800000] focus:ring-[#800000]/20 @enderror">
+                        <option value="">Select Grade Level</option>
+                        @php
+                            $selectedEducationLevel = old('education_level');
+                            $selectedGradeLevel = old('grade_level_applying_for');
+                            $gradeOptions = match ($selectedEducationLevel) {
+                                'elementary' => range(1, 6),
+                                'highschool' => range(7, 10),
+                                'seniorhigh' => [11, 12],
+                                default => [],
+                            };
+                        @endphp
+                        @foreach ($gradeOptions as $grade)
+                            @php $optionValue = "Grade {$grade}"; @endphp
+                            <option value="{{ $optionValue }}" {{ $selectedGradeLevel === $optionValue ? 'selected' : '' }}>{{ $optionValue }}</option>
+                        @endforeach
+                    </select>
                     @error('grade_level_applying_for') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">School Year <span class="text-red-500">*</span></label>
-                    <input type="text" name="school_year" value="{{ old('school_year') }}" placeholder="2024-2025" required
-                        class="w-full text-sm px-4 py-2.5 rounded-lg border bg-gray-50 focus:ring-2 focus:outline-none transition-colors 
+                    <select name="school_year" required class="w-full text-sm px-4 py-2.5 rounded-lg border bg-white focus:ring-2 focus:outline-none transition-colors 
                         @error('school_year') border-red-500 focus:ring-red-200 @else border-gray-300 focus:border-[#800000] focus:ring-[#800000]/20 @enderror">
+                        <option value="">Select School Year</option>
+                        <option value="2024-2025" {{ old('school_year') === '2024-2025' ? 'selected' : '' }}>2024-2025</option>
+                        <option value="2025-2026" {{ old('school_year') === '2025-2026' ? 'selected' : '' }}>2025-2026</option>
+                        <option value="2027-2028" {{ old('school_year') === '2027-2028' ? 'selected' : '' }}>2027-2028</option>
+                    </select>
                     @error('school_year') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
 
@@ -158,6 +187,19 @@
                         <option value="returning" {{ old('student_type') === 'returning' ? 'selected' : '' }}>Returning</option>
                     </select>
                     @error('student_type') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
+                </div>
+
+                <div id="course-strand-field" class="transition-all duration-150 {{ old('education_level') === 'seniorhigh' ? '' : 'hidden' }}">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Course / Strand Interested <span class="text-red-500">*</span></label>
+                    <select name="course_strand_interested" class="w-full text-sm px-4 py-2.5 rounded-lg border focus:ring-2 focus:outline-none transition-colors 
+                        @error('course_strand_interested') border-red-500 focus:ring-red-200 bg-red-50 @else border-gray-300 focus:border-[#800000] focus:ring-[#800000]/20 @enderror">
+                        <option value="">Select a course / strand</option>
+                        <option value="stem" {{ old('course_strand_interested') === 'stem' ? 'selected' : '' }}>STEM</option>
+                        <option value="abm" {{ old('course_strand_interested') === 'abm' ? 'selected' : '' }}>ABM</option>
+                        <option value="humss" {{ old('course_strand_interested') === 'humss' ? 'selected' : '' }}>HUMSS</option>
+                        <option value="tvl" {{ old('course_strand_interested') === 'tvl' ? 'selected' : '' }}>TVL</option>
+                    </select>
+                    @error('course_strand_interested') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
             </div>
         </div>
@@ -175,20 +217,6 @@
                         class="w-full text-sm px-4 py-2.5 rounded-lg border focus:ring-2 focus:outline-none transition-colors 
                         @error('previous_school_attended') border-red-500 focus:ring-red-200 bg-red-50 @else border-gray-300 focus:border-[#800000] focus:ring-[#800000]/20 @enderror">
                     @error('previous_school_attended') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Course / Strand Interested <span class="text-red-500">*</span></label>
-                    <select name="course_strand_interested" class="w-full text-sm px-4 py-2.5 rounded-lg border focus:ring-2 focus:outline-none transition-colors 
-                        @error('course_strand_interested') border-red-500 focus:ring-red-200 bg-red-50 @else border-gray-300 focus:border-[#800000] focus:ring-[#800000]/20 @enderror">
-                        <option value="">Select a course / strand</option>
-                        <option value="stem" {{ old('course_strand_interested') === 'stem' ? 'selected' : '' }}>STEM</option>
-                        <option value="abm" {{ old('course_strand_interested') === 'abm' ? 'selected' : '' }}>ABM</option>
-                        <option value="humss" {{ old('course_strand_interested') === 'humss' ? 'selected' : '' }}>HUMSS</option>
-                        <option value="tvl" {{ old('course_strand_interested') === 'tvl' ? 'selected' : '' }}>TVL</option>
-                        <option value="na" {{ old('course_strand_interested') === 'na' ? 'selected' : '' }}>Not Applicable (JHS/Elem)</option>
-                    </select>
-                    @error('course_strand_interested') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
@@ -313,6 +341,51 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const fileInputs = document.querySelectorAll('[data-file-input]');
+        const educationSelect = document.getElementById('education_level');
+        const gradeSelect = document.getElementById('grade_level_applying_for');
+        const courseWrapper = document.getElementById('course-strand-field');
+        const courseSelect = document.querySelector('[name="course_strand_interested"]');
+
+        const gradeOptions = {
+            elementary: ['Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6'],
+            highschool: ['Grade 7','Grade 8','Grade 9','Grade 10'],
+            seniorhigh: ['Grade 11','Grade 12'],
+        };
+
+        function refreshGradeOptions() {
+            const selectedEducation = educationSelect.value;
+            const selectedGrade = gradeSelect.value;
+            const options = gradeOptions[selectedEducation] || [];
+
+            gradeSelect.innerHTML = '<option value="">Select Grade Level</option>';
+
+            options.forEach(function (grade) {
+                const option = document.createElement('option');
+                option.value = grade;
+                option.textContent = grade;
+                if (grade === selectedGrade) {
+                    option.selected = true;
+                }
+                gradeSelect.appendChild(option);
+            });
+        }
+
+        function refreshCourseField() {
+            const isSenior = educationSelect.value === 'seniorhigh';
+            if (isSenior) {
+                courseWrapper.classList.remove('hidden');
+                courseSelect.required = true;
+            } else {
+                courseWrapper.classList.add('hidden');
+                courseSelect.required = false;
+                courseSelect.value = '';
+            }
+        }
+
+        educationSelect.addEventListener('change', function () {
+            refreshGradeOptions();
+            refreshCourseField();
+        });
 
         fileInputs.forEach(function (input) {
             input.addEventListener('change', function () {
@@ -327,6 +400,11 @@
                 fileNameLabel.textContent = selectedFile || 'No file selected';
             });
         });
+
+        if (educationSelect) {
+            refreshGradeOptions();
+            refreshCourseField();
+        }
     });
 </script>
 @endsection
