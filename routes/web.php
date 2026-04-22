@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StudentLoginController;
+use App\Http\Controllers\StudentSignupController;
 use App\Http\Controllers\StudentEnrollmentController;
 use App\Models\StudentEnrollmentForm;
 use Illuminate\Http\Request;
@@ -19,7 +20,9 @@ use App\Http\Controllers\RegistrarController;
 Route::get('/login', function () { return view('login'); })->name('login');
 Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
 
-//student public accwess
+//student public access
+Route::get('/student/signup', [StudentSignupController::class, 'showSignup'])->name('student.signup');
+Route::post('/student/signup', [StudentSignupController::class, 'signup'])->name('student.signup.submit');
 Route::get('/student/login', [StudentLoginController::class, 'showLogin'])->name('student_login');
 Route::post('/student/login', [StudentLoginController::class, 'login'])->name('student.login.submit');
 

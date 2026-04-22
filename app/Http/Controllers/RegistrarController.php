@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Models\Announcement;
+use App\Models\StudentAcademicHistory;
 use App\Models\StudentEnrollmentForm;
 use App\Models\StudentDocument;
 use Carbon\Carbon;
@@ -39,8 +43,11 @@ class RegistrarController extends Controller
         
         // Use with('documents') to prevent N+1 queries even on the preview list
         $newestApplications = StudentEnrollmentForm::with('documents')
-            ->where('student_type', 'new')
-            ->latest()
+            ->where(function ($query) {
+                $query->where('student_type', '!=', 'enrolled')
+                      ->orWhereNull('student_type');
+            })
+            ->latest('created_at')
             ->take(25) // Small limit for dashboard performance
             ->get();
 
@@ -57,7 +64,10 @@ class RegistrarController extends Controller
     public function applications(Request $request)
     {
         $query = StudentEnrollmentForm::with('documents')
-            ->where('student_type', 'new');
+            ->where(function ($q) {
+                $q->where('student_type', '!=', 'enrolled')
+                  ->orWhereNull('student_type');
+            });
 
         // 1. Search Logic
         if ($request->filled('search')) {
@@ -76,7 +86,11 @@ class RegistrarController extends Controller
 
         // 3. Date Filter
         if ($request->filled('start_date')) {
-            $query->whereDate('created_at', $request->start_date);
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->end_date);
         }
 
         // SCALING FIX: paginate(15) instead of get()
@@ -95,12 +109,13 @@ class RegistrarController extends Controller
 
     public function show($id)
     {
-        $student = StudentEnrollmentForm::with('documents')->findOrFail($id);
+        $student = StudentEnrollmentForm::with(['documents', 'academicHistories'])->findOrFail($id);
         $documents = $student->documents;
+        $academicHistories = $student->academicHistories;
 
         $allVerified = $documents->isNotEmpty() && $documents->every(fn($doc) => $doc->document_status === 'verified');
 
-        return view('registrar.student_record_view', compact('student', 'documents', 'allVerified'));
+        return view('registrar.student_record_view', compact('student', 'documents', 'allVerified', 'academicHistories'));
     }
 
     /**
@@ -150,6 +165,18 @@ class RegistrarController extends Controller
         $student->student_type = 'enrolled'; 
         $student->save();
 
+        if ($student->student_account_id) {
+            StudentAcademicHistory::updateOrCreate(
+                ['student_account_id' => $student->student_account_id],
+                [
+                    'status' => 'current',
+                    'grade_lvl' => $student->grade_level_applying_for,
+                    'previous_school_attended' => $student->previous_school_attended,
+                    'school_year' => $student->school_year,
+                ]
+            );
+        }
+
         return redirect()->route('registrar.student_records')
             ->with($hasMissingDocs ? 'warning' : 'success', 'Student enrollment status updated.');
     }
@@ -184,12 +211,33 @@ class RegistrarController extends Controller
 
     public function updateNotes(Request $request, $id)
     {
-        $request->validate(['notes' => 'required|string|max:500']);
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'announcement_text' => 'required|string|max:1000',
+        ]);
 
-        $student = StudentEnrollmentForm::findOrFail($id);
-        $student->registrar_notes = $request->notes;
-        $student->save();
+        $student = StudentEnrollmentForm::with('studentAccount')->findOrFail($id);
+        $studentAccount = $student->studentAccount;
 
-        return back()->with('success', 'Notes updated successfully.');
+        if (! $studentAccount) {
+            return back()->withErrors(['student' => 'Student account not linked.']);
+        }
+
+        $announcement = Announcement::create([
+            'title' => $request->title,
+            'announcement_text' => $request->announcement_text,
+            'urgency_level' => 'informational',
+            'registrar_account_id' => Auth::id(),
+        ]);
+
+        DB::table('announcement_student_accounts')->updateOrInsert([
+            'announcement_id' => $announcement->id,
+            'student_account_id' => $studentAccount->id,
+        ], [
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return back()->with('success', 'Announcement sent to student.');
     }
 }

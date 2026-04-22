@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\StudentAcademicHistory;
 
 class StudentEnrollmentForm extends Model
 {
@@ -47,5 +48,10 @@ class StudentEnrollmentForm extends Model
     public function studentAccount(): BelongsTo
     {
         return $this->belongsTo(StudentAccount::class);
+    }
+
+    public function academicHistories(): HasMany
+    {
+        return $this->hasMany(StudentAcademicHistory::class, 'student_account_id', 'student_account_id');
     }
 }
