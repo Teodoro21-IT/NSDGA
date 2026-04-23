@@ -160,6 +160,8 @@ Route::middleware(['student'])->group(function () {
 
         $submittedAt = $enrollment?->created_at;
         $documentsUpdatedAt = $documents->whereNotNull('document_path')->max('updated_at');
+        $registrarReview = $documents->isNotEmpty() && $documents->every(fn($doc) => in_array($doc->document_status, ['verified', 'action_needed']));
+        $enrolled = $enrollment?->student_type === 'enrolled';
 
         return view('student.contents.application', [
             'enrollment' => $enrollment,
@@ -167,6 +169,8 @@ Route::middleware(['student'])->group(function () {
             'studentName' => $studentName,
             'submittedAt' => $submittedAt,
             'documentsUpdatedAt' => $documentsUpdatedAt,
+            'registrarReview' => $registrarReview,
+            'enrolled' => $enrolled,
         ]);
     })->name('application');
     
