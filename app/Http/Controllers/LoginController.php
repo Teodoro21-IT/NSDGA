@@ -101,7 +101,7 @@
 
                 // Role-Based Redirection
                 return match ($user->role) {
-                    'admin'     => redirect()->route('admin.dashboard'),
+                    'admin'     => redirect()->route('admin_dashboard'),
                     'registrar' => redirect()->route('registrar_dashboard'),
                     default     => redirect('/login'),
                 };

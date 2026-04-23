@@ -10,21 +10,20 @@
 </head>
 <body class="bg-slate-50 min-h-screen flex text-slate-900">
 
-
-     <x-admin.sidebar />    
+  
+        <x-admin.sidebar />
+    
+        <main class="flex-1 flex flex-col min-h-screen ml-[260px]">
+       @include('components.admin.admin_navbar')
 
        
-
-    <main class="flex-1 overflow-y-auto">
-        <header class="bg-white/80 backdrop-blur-md shadow-sm p-4 flex justify-between items-center sticky top-0 z-10 border-b border-slate-200">
-            <h2 class="text-xl font-bold text-slate-800 tracking-tight">Accounts Management</h2>
-            <div class="flex items-center space-x-4">
-                <span class="text-sm font-semibold text-blue-600 bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100">
-                    Admin: {{ Auth::user()->user }}
-                </span>
+        <div class="p-10 pt-24 w-full">
+            {{-- Header Section --}}
+            <div class="mb-8">
+                <h1 class="text-[32px] font-extrabold text-[#7f0000] tracking-tight">Manage Accounts</h1>
+                <p class="text-slate-500 font-medium">Manage and review Registrar accounts </p>
             </div>
-        </header>
-
+        
         <div class="p-8">
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 

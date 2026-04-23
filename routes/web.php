@@ -52,7 +52,9 @@ Route::middleware(['auth'])->group(function () {
     // --- ADMIN ONLY ROUTES ---
     // Uses the 'admin' alias you created in app.php
     Route::middleware(['admin'])->prefix('admin')->group(function () {
-        
+
+        Route::get('/admin_dashboard', [AdminController::class, 'dashboard'])->name('admin_dashboard');
+
         // Dashboard
         Route::get('/dashboard', function () {
             $accounts = User::all();

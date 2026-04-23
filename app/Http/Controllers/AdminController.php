@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
+public function dashboard()
+    {
+        return view('admin.admin_dashboard');
+    }
+
+
     public function index()
     {
         // Kinukuha lahat ng data para hindi mag-error ang table

@@ -16,21 +16,17 @@
     </style>
 </head>
 <body class="bg-[#f8fafc] min-h-screen flex text-slate-900">
+   <x-admin.sidebar />
+    
+        <main class="flex-1 flex flex-col min-h-screen ml-[260px]">
+       @include('components.admin.admin_navbar')
 
-    <x-admin.sidebar />
-
-    <main class="flex-1 flex flex-col h-screen overflow-hidden">
-        <header class="p-6 flex items-center justify-between">
-            <div>
-                <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Security Settings</h2>
-                <p class="text-sm text-slate-500">Manage your account access and credentials</p>
+       <div class="p-10 pt-24 w-full">
+            {{-- Header Section --}}
+            <div class="mb-8">
+                <h1 class="text-[32px] font-extrabold text-[#7f0000] tracking-tight">Password</h1>
+                <p class="text-slate-500 font-medium">Manage and review your password settings</p>
             </div>
-            <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="Path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-            </div>
-        </header>
 
         <div class="flex-1 overflow-y-auto p-6 md:p-12 flex justify-center items-start">
             <div class="w-full max-w-xl">

@@ -8,12 +8,19 @@
 </head>
 <body class="bg-slate-50 min-h-screen flex text-slate-900 font-inter">
 
-    <x-admin.sidebar />
+      <x-admin.sidebar />
+    
+        <main class="flex-1 flex flex-col min-h-screen ml-[260px]">
+       @include('components.admin.admin_navbar')
+       
+        <div class="p-10 pt-24 w-full">
+            {{-- Header Section --}}
+            <div class="mb-8">
+                <h1 class="text-[32px] font-extrabold text-[#7f0000] tracking-tight">Create New Event</h1>
+                <p class="text-slate-500 font-medium">Manage and review incoming events for Academic Year 2026-2027.</p>
+            </div>
 
-    <main class="flex-1 overflow-y-auto">
-        <header class="bg-white/80 backdrop-blur-md shadow-sm p-4 flex justify-between items-center sticky top-0 z-10 border-b border-slate-200">
-            <h2 class="text-xl font-bold text-slate-800 tracking-tight">Event Management</h2>
-        </header>
+        
 
         <div class="p-8 max-w-4xl">
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
