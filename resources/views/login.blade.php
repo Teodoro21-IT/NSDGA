@@ -31,7 +31,7 @@
         <div class="w-full max-w-[480px]">
             
             <div class="mb-10">
-                <p class="text-[11px] font-black text-[#7f0000] uppercase tracking-[0.2em] mb-2">Registrar Portal</p>
+                <p class="text-[11px] font-black text-[#7f0000] uppercase tracking-[0.2em] mb-2"> </p>
                 <h2 class="text-[44px] font-extrabold text-slate-900 tracking-tight leading-none mb-4">Secure Access</h2>
                 <p class="text-slate-500 font-medium text-base">Welcome back. Please authenticate to access the registrar dashboard.</p>
             </div>
@@ -80,7 +80,7 @@
                 </div>
 
                 <button type="submit" class="w-full bg-[#7f0000] hover:bg-[#600000] text-white font-bold py-5 rounded-2xl shadow-xl shadow-maroon-100 transition-all active:scale-[0.98] flex items-center justify-center gap-3">
-                    <span class="uppercase tracking-widest text-xs">Registrar Sign In</span>
+                    <span class="uppercase tracking-widest text-xs">Sign In</span>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </button>
             </form>

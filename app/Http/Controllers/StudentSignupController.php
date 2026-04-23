@@ -24,7 +24,7 @@ class StudentSignupController extends Controller
         $validated = $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:student_accounts,email'],
-            'password' => ['required', 'string', 'confirmed', 'min:8'],
+            'password' => ['required', 'string', 'confirmed', Password::min(12)->mixedCase()->numbers()->symbols()],
         ]);
 
         StudentAccount::create([
