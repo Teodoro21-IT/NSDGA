@@ -177,17 +177,7 @@
                     @error('school_year') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Student Type <span class="text-red-500">*</span></label>
-                    <select name="student_type" required class="w-full text-sm px-4 py-2.5 rounded-lg border focus:ring-2 focus:outline-none transition-colors 
-                        @error('student_type') border-red-500 focus:ring-red-200 bg-red-50 @else border-gray-300 focus:border-[#800000] focus:ring-[#800000]/20 @enderror">
-                        <option value="">Select Type</option>
-                        <option value="new" {{ old('student_type') === 'new' ? 'selected' : '' }}>New Student</option>
-                        <option value="transferee" {{ old('student_type') === 'transferee' ? 'selected' : '' }}>Transferee</option>
-                        <option value="returning" {{ old('student_type') === 'returning' ? 'selected' : '' }}>Returning</option>
-                    </select>
-                    @error('student_type') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
-                </div>
+                <input type="hidden" name="student_type" value="applicant">
 
                 <div id="course-strand-field" class="transition-all duration-150 {{ old('education_level') === 'seniorhigh' ? '' : 'hidden' }}">
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Course / Strand Interested <span class="text-red-500">*</span></label>

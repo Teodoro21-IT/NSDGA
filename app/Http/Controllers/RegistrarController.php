@@ -35,7 +35,9 @@ class RegistrarController extends Controller
             $growth = (($thisYearSubmissions - $lastYearSubmissions) / $lastYearSubmissions) * 100;
         }
 
-        $totalPending = StudentEnrollmentForm::where('student_type', 'new')->count();
+        $totalPending = StudentEnrollmentForm::where('student_type', '!=', 'enrolled')
+            ->orWhereNull('student_type')
+            ->count();
         
         $docsForReview = StudentDocument::whereIn('document_status', ['under_review', 'action_needed'])
             ->distinct('student_enrollment_form_id')
@@ -103,8 +105,9 @@ class RegistrarController extends Controller
     {
         $student = StudentEnrollmentForm::with('documents')->findOrFail($id);
         $documents = $student->documents;
+        $canEnroll = $documents->isNotEmpty() && $documents->every(fn($doc) => in_array($doc->document_status, ['verified', 'action_needed']));
 
-        return view('registrar.applications_show', compact('student', 'documents'));
+        return view('registrar.applications_show', compact('student', 'documents', 'canEnroll'));
     }
 
     public function show($id)
@@ -114,8 +117,9 @@ class RegistrarController extends Controller
         $academicHistories = $student->academicHistories;
 
         $allVerified = $documents->isNotEmpty() && $documents->every(fn($doc) => $doc->document_status === 'verified');
+        $canEnroll = $documents->isNotEmpty() && $documents->every(fn($doc) => in_array($doc->document_status, ['verified', 'action_needed']));
 
-        return view('registrar.student_record_view', compact('student', 'documents', 'allVerified', 'academicHistories'));
+        return view('registrar.student_record_view', compact('student', 'documents', 'allVerified', 'academicHistories', 'canEnroll'));
     }
 
     /**
@@ -159,13 +163,17 @@ class RegistrarController extends Controller
 
     public function enrollStudent($id)
     {
-        $student = StudentEnrollmentForm::findOrFail($id);
-        
-        $hasMissingDocs = StudentDocument::where('student_enrollment_form_id', $id)
-            ->where('document_status', 'not_uploaded')
-            ->exists();
+        $student = StudentEnrollmentForm::with('documents')->findOrFail($id);
+        $documents = $student->documents;
 
-        $student->student_type = 'enrolled'; 
+        $canEnroll = $documents->isNotEmpty() && $documents->every(fn($doc) => in_array($doc->document_status, ['verified', 'action_needed']));
+
+        if (! $canEnroll) {
+            return redirect()->route('registrar.show', $id)
+                ->with('warning', 'Student documents must be reviewed before enrollment.');
+        }
+
+        $student->student_type = 'enrolled';
         $student->save();
 
         if ($student->student_account_id) {
@@ -181,7 +189,7 @@ class RegistrarController extends Controller
         }
 
         return redirect()->route('registrar.student_records')
-            ->with($hasMissingDocs ? 'warning' : 'success', 'Student enrollment status updated.');
+            ->with('success', 'Student enrollment status updated.');
     }
 
     /**
