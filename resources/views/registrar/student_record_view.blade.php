@@ -150,13 +150,13 @@
                             <h1 class="text-xl font-bold text-slate-900 tracking-tight leading-tight">
                                 {{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}
                             </h1>
-                            <p class="text-[11px] font-semibold text-slate-400 mt-1 font-mono">
-                                LRN: {{ $student->lrn ?? 'Not Assigned' }} &nbsp;·&nbsp; {{ $student->grade_level_applying_for }}
-                            </p>
                             <div class="mt-2.5">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 border border-green-200 text-green-600 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                                    Currently Enrolled
+                                @php
+                                    $isEnrolled = strtolower($student->student_type ?? '') === 'enrolled';
+                                @endphp
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 {{ $isEnrolled ? 'bg-green-50 border-green-200 text-green-600' : 'bg-slate-50 border-slate-200 text-slate-600' }} rounded-full text-[10px] font-bold uppercase tracking-wider">
+                                    <span class="w-1.5 h-1.5 rounded-full {{ $isEnrolled ? 'bg-green-500' : 'bg-slate-400' }}"></span>
+                                    {{ $isEnrolled ? 'Enrolled' : 'Applicant' }}
                                 </span>
                             </div>
                         </div>

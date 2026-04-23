@@ -122,18 +122,21 @@ class RegistrarController extends Controller
      * DOCUMENT REVIEW QUEUE
      * Scaling fix: Grouping 1,000+ files can be slow; we now paginate by Student.
      */
-    public function documentIndex(Request $request) 
+    public function documentIndex(Request $request)
     {
-        // We query students WHO HAVE documents needing review
-        $query = StudentEnrollmentForm::whereHas('documents', function($q) {
-            $q->whereIn('document_status', ['under_review', 'action_needed']);
-        })->with(['documents' => function($q) {
-            $q->whereIn('document_status', ['under_review', 'action_needed']);
-        }]);
+        // Show all students who have uploaded documents, regardless of enrollment status.
+        $query = StudentEnrollmentForm::whereHas('documents')
+            ->with('documents');
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('last_name', 'LIKE', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('last_name', 'LIKE', "%{$search}%")
+                  ->orWhere('first_name', 'LIKE', "%{$search}%")
+                  ->orWhereHas('documents', function ($q2) use ($search) {
+                      $q2->where('document_type', 'LIKE', "%{$search}%");
+                  });
+            });
         }
 
         $documents = $query->latest()->paginate(10)->withQueryString();
