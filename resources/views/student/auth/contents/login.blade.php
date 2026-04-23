@@ -76,7 +76,7 @@
 
 
         <p class="mt-8 text-center text-sm text-gray-600">
-            Don't have an account yet? <a href="#" class="font-semibold text-[#800000] hover:text-[#5a0000]">Sign up</a>
+            Don't have an account yet? <a href="{{ route('student.signup') }}" class="font-semibold text-[#800000] hover:text-[#5a0000]">Sign up</a>
         </p>
     </form>
 </div>

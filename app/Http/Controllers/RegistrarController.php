@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Models\Announcement;
+use App\Models\StudentAcademicHistory;
 use App\Models\StudentEnrollmentForm;
 use App\Models\StudentDocument;
 use Carbon\Carbon;
@@ -31,7 +35,9 @@ class RegistrarController extends Controller
             $growth = (($thisYearSubmissions - $lastYearSubmissions) / $lastYearSubmissions) * 100;
         }
 
-        $totalPending = StudentEnrollmentForm::where('student_type', 'new')->count();
+        $totalPending = StudentEnrollmentForm::where('student_type', '!=', 'enrolled')
+            ->orWhereNull('student_type')
+            ->count();
         
         $docsForReview = StudentDocument::whereIn('document_status', ['under_review', 'action_needed'])
             ->distinct('student_enrollment_form_id')
@@ -39,8 +45,11 @@ class RegistrarController extends Controller
         
         // Use with('documents') to prevent N+1 queries even on the preview list
         $newestApplications = StudentEnrollmentForm::with('documents')
-            ->where('student_type', 'new')
-            ->latest()
+            ->where(function ($query) {
+                $query->where('student_type', '!=', 'enrolled')
+                      ->orWhereNull('student_type');
+            })
+            ->latest('created_at')
             ->take(25) // Small limit for dashboard performance
             ->get();
 
@@ -57,7 +66,10 @@ class RegistrarController extends Controller
     public function applications(Request $request)
     {
         $query = StudentEnrollmentForm::with('documents')
-            ->where('student_type', 'new');
+            ->where(function ($q) {
+                $q->where('student_type', '!=', 'enrolled')
+                  ->orWhereNull('student_type');
+            });
 
         // 1. Search Logic
         if ($request->filled('search')) {
@@ -76,7 +88,11 @@ class RegistrarController extends Controller
 
         // 3. Date Filter
         if ($request->filled('start_date')) {
-            $query->whereDate('created_at', $request->start_date);
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->end_date);
         }
 
         // SCALING FIX: paginate(15) instead of get()
@@ -89,36 +105,42 @@ class RegistrarController extends Controller
     {
         $student = StudentEnrollmentForm::with('documents')->findOrFail($id);
         $documents = $student->documents;
+        $canEnroll = $documents->isNotEmpty() && $documents->every(fn($doc) => in_array($doc->document_status, ['verified', 'action_needed']));
 
-        return view('registrar.applications_show', compact('student', 'documents'));
+        return view('registrar.applications_show', compact('student', 'documents', 'canEnroll'));
     }
 
     public function show($id)
     {
-        $student = StudentEnrollmentForm::with('documents')->findOrFail($id);
+        $student = StudentEnrollmentForm::with(['documents', 'academicHistories'])->findOrFail($id);
         $documents = $student->documents;
+        $academicHistories = $student->academicHistories;
 
         $allVerified = $documents->isNotEmpty() && $documents->every(fn($doc) => $doc->document_status === 'verified');
+        $canEnroll = $documents->isNotEmpty() && $documents->every(fn($doc) => in_array($doc->document_status, ['verified', 'action_needed']));
 
-        return view('registrar.student_record_view', compact('student', 'documents', 'allVerified'));
+        return view('registrar.student_record_view', compact('student', 'documents', 'allVerified', 'academicHistories', 'canEnroll'));
     }
 
     /**
      * DOCUMENT REVIEW QUEUE
      * Scaling fix: Grouping 1,000+ files can be slow; we now paginate by Student.
      */
-    public function documentIndex(Request $request) 
+    public function documentIndex(Request $request)
     {
-        // We query students WHO HAVE documents needing review
-        $query = StudentEnrollmentForm::whereHas('documents', function($q) {
-            $q->whereIn('document_status', ['under_review', 'action_needed']);
-        })->with(['documents' => function($q) {
-            $q->whereIn('document_status', ['under_review', 'action_needed']);
-        }]);
+        // Show all students who have uploaded documents, regardless of enrollment status.
+        $query = StudentEnrollmentForm::whereHas('documents')
+            ->with('documents');
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('last_name', 'LIKE', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('last_name', 'LIKE', "%{$search}%")
+                  ->orWhere('first_name', 'LIKE', "%{$search}%")
+                  ->orWhereHas('documents', function ($q2) use ($search) {
+                      $q2->where('document_type', 'LIKE', "%{$search}%");
+                  });
+            });
         }
 
         $documents = $query->latest()->paginate(10)->withQueryString();
@@ -141,17 +163,33 @@ class RegistrarController extends Controller
 
     public function enrollStudent($id)
     {
-        $student = StudentEnrollmentForm::findOrFail($id);
-        
-        $hasMissingDocs = StudentDocument::where('student_enrollment_form_id', $id)
-            ->where('document_status', 'not_uploaded')
-            ->exists();
+        $student = StudentEnrollmentForm::with('documents')->findOrFail($id);
+        $documents = $student->documents;
 
-        $student->student_type = 'enrolled'; 
+        $canEnroll = $documents->isNotEmpty() && $documents->every(fn($doc) => in_array($doc->document_status, ['verified', 'action_needed']));
+
+        if (! $canEnroll) {
+            return redirect()->route('registrar.show', $id)
+                ->with('warning', 'Student documents must be reviewed before enrollment.');
+        }
+
+        $student->student_type = 'enrolled';
         $student->save();
 
+        if ($student->student_account_id) {
+            StudentAcademicHistory::updateOrCreate(
+                ['student_account_id' => $student->student_account_id],
+                [
+                    'status' => 'current',
+                    'grade_lvl' => $student->grade_level_applying_for,
+                    'previous_school_attended' => $student->previous_school_attended,
+                    'school_year' => $student->school_year,
+                ]
+            );
+        }
+
         return redirect()->route('registrar.student_records')
-            ->with($hasMissingDocs ? 'warning' : 'success', 'Student enrollment status updated.');
+            ->with('success', 'Student enrollment status updated.');
     }
 
     /**
@@ -184,12 +222,33 @@ class RegistrarController extends Controller
 
     public function updateNotes(Request $request, $id)
     {
-        $request->validate(['notes' => 'required|string|max:500']);
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'announcement_text' => 'required|string|max:1000',
+        ]);
 
-        $student = StudentEnrollmentForm::findOrFail($id);
-        $student->registrar_notes = $request->notes;
-        $student->save();
+        $student = StudentEnrollmentForm::with('studentAccount')->findOrFail($id);
+        $studentAccount = $student->studentAccount;
 
-        return back()->with('success', 'Notes updated successfully.');
+        if (! $studentAccount) {
+            return back()->withErrors(['student' => 'Student account not linked.']);
+        }
+
+        $announcement = Announcement::create([
+            'title' => $request->title,
+            'announcement_text' => $request->announcement_text,
+            'urgency_level' => 'informational',
+            'registrar_account_id' => Auth::id(),
+        ]);
+
+        DB::table('announcement_student_accounts')->updateOrInsert([
+            'announcement_id' => $announcement->id,
+            'student_account_id' => $studentAccount->id,
+        ], [
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return back()->with('success', 'Announcement sent to student.');
     }
 }

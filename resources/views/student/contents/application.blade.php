@@ -3,7 +3,22 @@
 @section('content')
 @php
     $hasEnrollment = (bool) $enrollment;
-    $progressStep = $documentsComplete ? 2 : ($hasEnrollment ? 1 : 0);
+    $registrarReview = $registrarReview ?? false;
+    $enrolled = $enrolled ?? false;
+
+    $progressWidthClass = 'w-0';
+    if ($hasEnrollment) {
+        $progressWidthClass = 'w-1/4';
+    }
+    if ($documentsComplete) {
+        $progressWidthClass = 'w-2/4';
+    }
+    if ($registrarReview) {
+        $progressWidthClass = 'w-3/4';
+    }
+    if ($enrolled) {
+        $progressWidthClass = 'w-full';
+    }
 @endphp
 
 <div class="space-y-8">
@@ -19,10 +34,9 @@
     <div class="rounded-xl border border-slate-200 bg-white p-10 shadow-sm">
         <div class="relative mx-auto max-w-4xl">
             <div class="absolute top-4 left-0 h-0.5 w-full bg-slate-200"></div>
-            
-            <div class="absolute top-4 left-0 h-0.5 transition-all duration-500 {{ $documentsComplete ? 'w-full' : ($hasEnrollment ? 'w-1/2' : 'w-0') }} bg-slate-800"></div>
+            <div class="absolute top-4 left-0 h-0.5 transition-all duration-500 {{ $progressWidthClass }} bg-slate-800"></div>
 
-            <div class="relative flex justify-between">
+            <div class="relative grid grid-cols-4 gap-6">
                 <div class="flex flex-col items-center">
                     <div class="z-10 flex h-9 w-9 items-center justify-center rounded-full {{ $hasEnrollment ? 'bg-emerald-500 text-white' : 'bg-white border-2 border-slate-300 text-slate-400' }}">
                         @if ($hasEnrollment)
@@ -38,11 +52,11 @@
                 </div>
 
                 <div class="flex flex-col items-center">
-                    <div class="z-10 flex h-9 w-9 items-center justify-center rounded-full {{ $documentsComplete ? 'bg-emerald-500 text-white' : ($hasEnrollment ? 'bg-emerald-500 text-white' : 'bg-white border-2 border-slate-200 text-slate-400') }}">
-                         @if ($documentsComplete)
+                    <div class="z-10 flex h-9 w-9 items-center justify-center rounded-full {{ $documentsComplete ? 'bg-emerald-500 text-white' : 'bg-white border-2 border-slate-200 text-slate-400' }}">
+                        @if ($documentsComplete)
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
                         @else
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                            <span class="text-sm font-bold">2</span>
                         @endif
                     </div>
                     <div class="mt-3 text-center">
@@ -52,16 +66,30 @@
                 </div>
 
                 <div class="flex flex-col items-center">
-                    <div class="z-10 flex h-9 w-9 items-center justify-center rounded-full {{ $documentsComplete ? 'bg-white border-2 border-slate-400 text-slate-600' : 'bg-white border-2 border-slate-200 text-slate-300' }}">
-                        @if($documentsComplete)
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <div class="z-10 flex h-9 w-9 items-center justify-center rounded-full {{ $registrarReview ? 'bg-emerald-500 text-white' : 'bg-white border-2 border-slate-200 text-slate-300' }}">
+                        @if ($registrarReview)
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
                         @else
                             <span class="text-sm font-bold">3</span>
                         @endif
                     </div>
                     <div class="mt-3 text-center">
                         <p class="text-sm font-bold text-slate-900">Registrar Review</p>
-                        <p class="text-xs text-slate-500 italic">{{ $documentsComplete ? 'In Progress' : 'Pending' }}</p>
+                        <p class="text-xs text-slate-500 italic">{{ $registrarReview ? 'Completed' : 'In Progress' }}</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <div class="z-10 flex h-9 w-9 items-center justify-center rounded-full {{ $enrolled ? 'bg-emerald-500 text-white' : 'bg-white border-2 border-slate-200 text-slate-300' }}">
+                        @if ($enrolled)
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                        @else
+                            <span class="text-sm font-bold">4</span>
+                        @endif
+                    </div>
+                    <div class="mt-3 text-center">
+                        <p class="text-sm font-bold text-slate-900">Enrolled</p>
+                        <p class="text-xs text-slate-500 italic">{{ $enrolled ? 'Completed' : 'In Progress' }}</p>
                     </div>
                 </div>
             </div>

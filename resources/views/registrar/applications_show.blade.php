@@ -34,106 +34,132 @@
         </div>
             
             {{-- Figma Header Section --}}
-            <div class="flex justify-between items-start mb-8">
-                <div>
-                    <h1 class="text-[32px] font-black text-slate-900 tracking-tight leading-none">{{ $student->first_name }} {{ $student->last_name }}</h1>
-                    <p class="text-slate-400 font-bold mt-2 text-sm uppercase tracking-wider">
-                        APP-{{ $student->created_at->format('Y') }}-{{ str_pad($student->id, 4, '0', STR_PAD_LEFT) }} • Incoming {{ $student->grade_level_applying_for }}
-                    </p>
+            <div class="mb-8 space-y-4">
+                <div class="flex justify-between items-start gap-4">
+                    <div>
+                        <h1 class="text-[32px] font-black text-slate-900 tracking-tight leading-none">{{ $student->first_name }} {{ $student->last_name }}</h1>
+                        <p class="text-slate-400 font-bold mt-2 text-sm uppercase tracking-wider">
+                            APP-{{ $student->created_at->format('Y') }}-{{ str_pad($student->id, 4, '0', STR_PAD_LEFT) }} • Incoming {{ $student->grade_level_applying_for }}
+                        </p>
+                    </div>
+                    <form action="{{ route('registrar.enroll', $student->id) }}" method="POST">
+                        @csrf
+                        <button type="submit" @disabled(! $canEnroll) class="px-10 py-4 rounded-xl font-black shadow-xl transition active:scale-95 {{ $canEnroll ? 'bg-[#7f0000] text-white hover:bg-[#600000]' : 'bg-slate-300 text-slate-600 cursor-not-allowed' }}">
+                            Approve Admission
+                        </button>
+                    </form>
                 </div>
-                <form action="{{ route('registrar.enroll', $student->id) }}" method="POST">
-                    @csrf
-                    <button type="submit" class="px-10 py-4 bg-[#7f0000] text-white font-black rounded-xl shadow-xl hover:bg-[#600000] transition active:scale-95">
-                        Approve Admission
-                    </button>
-                </form>
+
+                @unless($canEnroll)
+                    <div class="flex items-start gap-2 w-full bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-500 mt-0.5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        <p class="text-[11px] font-semibold text-amber-700 leading-relaxed">
+                            Approval is blocked until all documents are reviewed. Each must be verified or marked action needed.
+                        </p>
+                    </div>
+                @endunless
             </div>
 
             {{-- Main Form Container --}}
             <div class="space-y-8">
                 
-                {{-- Personal Information Section --}}
+                                {{-- Personal Information Section --}}
                 <div class="bg-white p-10 rounded-[32px] shadow-sm border border-slate-100">
-                    <h3 class="text-[11px] font-black text-slate-300 uppercase tracking-[0.3em] mb-8">Personal Information</h3>
+                    <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] mb-8">Personal Information</h3>
                     
                     <div class="grid grid-cols-3 gap-6 mb-6">
                         <div>
-                            <label class="figma-label">First Name</label>
-                            <input type="text" readonly value="{{ $student->first_name }}" class="figma-input">
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">First Name</label>
+                            <input type="text" readonly value="{{ $student->first_name }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                         </div>
                         <div>
-                            <label class="figma-label">Middle Name</label>
-                            <input type="text" readonly value="{{ $student->middle_name ?? 'N/A' }}" class="figma-input">
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">Middle Name</label>
+                            <input type="text" readonly value="{{ $student->middle_name ?? 'N/A' }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                         </div>
                         <div>
-                            <label class="figma-label">Last Name</label>
-                            <input type="text" readonly value="{{ $student->last_name }}" class="figma-input">
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">Last Name</label>
+                            <input type="text" readonly value="{{ $student->last_name }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-3 gap-6 mb-6">
                         <div>
-                            <label class="figma-label">LRN (12-digit)</label>
-                            <input type="text" readonly value="{{ $student->lrn ?? '136676090147' }}" class="figma-input">
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">LRN (12-digit)</label>
+                            <input type="text" readonly value="{{ $student->lrn ?? '136676090147' }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                         </div>
                         <div>
-                            <label class="figma-label">Sex</label>
-                            <input type="text" readonly value="{{ ucfirst($student->sex ?? 'Male') }}" class="figma-input">
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">Sex</label>
+                            <input type="text" readonly value="{{ ucfirst($student->sex ?? 'Male') }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                         </div>
                         <div>
-                            <label class="figma-label">Age</label>
-                            <input type="text" readonly value="{{ \Carbon\Carbon::parse($student->date_of_birth)->age }}" class="figma-input">
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">Age</label>
+                            <input type="text" readonly value="{{ \Carbon\Carbon::parse($student->date_of_birth)->age }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-6 mb-6">
                         <div>
-                            <label class="figma-label">Date of Birth</label>
-                            <input type="text" readonly value="{{ \Carbon\Carbon::parse($student->date_of_birth)->format('m/d/Y') }}" class="figma-input">
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">Date of Birth</label>
+                            <input type="text" readonly value="{{ \Carbon\Carbon::parse($student->date_of_birth)->format('m/d/Y') }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                         </div>
                         <div>
-                            <label class="figma-label">Birthplace</label>
-                            <input type="text" readonly value="{{ $student->birthplace ?? 'Marikina City' }}" class="figma-input">
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">Birthplace</label>
+                            <input type="text" readonly value="{{ $student->birthplace ?? 'Marikina City' }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                         </div>
                     </div>
 
                     <div class="mb-6">
-                        <label class="figma-label">Home Address</label>
-                        <input type="text" readonly value="{{ $student->home_address }}" class="figma-input">
+                        <label class="block text-[12px] font-semibold text-slate-600 mb-2">Home Address</label>
+                        <input type="text" readonly value="{{ $student->home_address }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                     </div>
 
-                    <div class="grid grid-cols-3 gap-6">
+                    <div class="grid grid-cols-3 gap-6 mb-6">
                         <div>
-                            <label class="figma-label">Contact Number</label>
-                            <input type="text" readonly value="{{ $student->contact_number }}" class="figma-input">
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">Contact Number</label>
+                            <input type="text" readonly value="{{ $student->contact_number }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                         </div>
                         <div>
-                            <label class="figma-label">Education Level</label>
-                            <input type="text" readonly value="{{ ucfirst($student->education_level ?? 'High School') }}" class="figma-input">
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">Education Level</label>
+                            <input type="text" readonly value="{{ ucfirst($student->education_level ?? 'High School') }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                         </div>
                         <div>
-                            <label class="figma-label">Grade Level Applying For</label>
-                            <input type="text" readonly value="{{ $student->grade_level_applying_for }}" class="figma-input">
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">Grade Level Applying For</label>
+                            <input type="text" readonly value="{{ $student->grade_level_applying_for }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">School Year</label>
+                            <input type="text" readonly value="{{ $student->school_year ?? '2024-2025' }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
+                        </div>
+                        <div>
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">Student Type</label>
+                            <input type="text" readonly value="{{ $student->student_type === 'enrolled' ? 'Enrolled' : 'Applicant' }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                         </div>
                     </div>
                 </div>
 
                 {{-- Academic Background Section --}}
                 <div class="bg-white p-10 rounded-[32px] shadow-sm border border-slate-100">
-                    <h3 class="text-[11px] font-black text-slate-300 uppercase tracking-[0.3em] mb-8">Academic Background</h3>
+                    <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] mb-8">Academic Background</h3>
+                    
                     <div class="grid grid-cols-2 gap-6 mb-6">
                         <div>
-                            <label class="figma-label">Previous School Attended</label>
-                            <input type="text" readonly value="{{ $student->last_school_attended ?? 'N/A' }}" class="figma-input">
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">Previous School Attended</label>
+                            <input type="text" readonly value="{{ $student->last_school_attended ?? 'N/A' }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                         </div>
                         <div>
-                            <label class="figma-label">GWA (General Weighted Average)</label>
-                            <input type="text" readonly value="{{ $student->gwa ?? '0.00' }}" class="figma-input">
+                            <label class="block text-[12px] font-semibold text-slate-600 mb-2">GWA (General Weighted Average)</label>
+                            <input type="text" readonly value="{{ $student->gwa ?? '0.00' }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                         </div>
                     </div>
-                    <div class="w-1/2">
-                        <label class="figma-label">Last Grade/Year Level Completed</label>
-                        <input type="text" readonly value="{{ $student->last_grade_year_level_completed ?? 'N/A' }}" class="figma-input">
+                    
+                    <div>
+                        <label class="block text-[12px] font-semibold text-slate-600 mb-2">Last Grade/Year Level Completed</label>
+                        <input type="text" readonly value="{{ $student->last_grade_year_level_completed ?? 'N/A' }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-slate-200">
                     </div>
                 </div>
 
@@ -169,22 +195,30 @@
                                     </span>
 
                                     {{-- Action Buttons --}}
-                                    <div class="flex gap-2">
+                                    <div class="flex gap-2 items-center">
                                         @if(!$isMissing)
                                             <a href="{{ asset('storage/' . $doc->document_path) }}" target="_blank" class="px-4 py-2 bg-slate-200 text-slate-600 text-[10px] font-black rounded-lg uppercase hover:bg-slate-300 transition">View</a>
-                                            
+                                        @endif
+
+                                        @if($isUnderReview)
                                             <form action="{{ route('registrar.documents.update_status', $doc->id) }}" method="POST">
                                                 @csrf
                                                 <input type="hidden" name="document_status" value="verified">
-                                                <button type="submit" class="px-4 py-2 bg-slate-200 text-slate-600 text-[10px] font-black rounded-lg uppercase hover:bg-green-500 hover:text-white transition {{ $isVerified ? 'hidden' : '' }}">Approve</button>
+                                                <button type="submit" class="px-4 py-2 bg-slate-200 text-slate-600 text-[10px] font-black rounded-lg uppercase hover:bg-green-500 hover:text-white transition">Approve</button>
+                                            </form>
+
+                                            <form action="{{ route('registrar.documents.update_status', $doc->id) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="document_status" value="action_needed">
+                                                <button type="submit" class="px-4 py-2 bg-slate-200 text-slate-600 text-[10px] font-black rounded-lg uppercase hover:bg-red-500 hover:text-white transition">Correct</button>
+                                            </form>
+                                        @elseif($isVerified || $isActionNeeded)
+                                            <form action="{{ route('registrar.documents.update_status', $doc->id) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="document_status" value="under_review">
+                                                <button type="submit" class="px-4 py-2 bg-slate-200 text-slate-600 text-[10px] font-black rounded-lg uppercase hover:bg-red-500 hover:text-white transition">Reset</button>
                                             </form>
                                         @endif
-
-                                        <form action="{{ route('registrar.documents.update_status', $doc->id) }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="document_status" value="action_needed">
-                                            <button type="submit" class="px-4 py-2 bg-slate-200 text-slate-600 text-[10px] font-black rounded-lg uppercase hover:bg-red-500 hover:text-white transition {{ $isActionNeeded ? 'hidden' : '' }}">Correct</button>
-                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -198,9 +232,29 @@
                     
                     <form action="{{ route('registrar.update_notes', $student->id) }}" method="POST">
                         @csrf
-                        <div class="bg-[#F3F4F6] rounded-2xl p-6 border border-slate-100">
-                            <textarea name="notes" placeholder="Enter feedback or requested corrections here..." 
-                                class="w-full bg-transparent text-sm font-medium text-slate-600 focus:outline-none resize-none" rows="5">{{ $student->registrar_notes }}</textarea>
+                        <div class="space-y-4 bg-[#F3F4F6] rounded-2xl p-6 border border-slate-100">
+                            <div>
+                                <label for="title" class="block text-[12px] font-semibold text-slate-700 mb-2">Title</label>
+                                <input
+                                    id="title"
+                                    name="title"
+                                    type="text"
+                                    value="{{ old('title') }}"
+                                    placeholder="Enter announcement title"
+                                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 focus:border-[#7f0000] focus:outline-none focus:ring-1 focus:ring-[#7f0000]/20"
+                                >
+                            </div>
+
+                            <div>
+                                <label for="announcement_text" class="block text-[12px] font-semibold text-slate-700 mb-2">Announcement Text</label>
+                                <textarea
+                                    id="announcement_text"
+                                    name="announcement_text"
+                                    placeholder="Enter the announcement message to the student..."
+                                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 focus:border-[#7f0000] focus:outline-none focus:ring-1 focus:ring-[#7f0000]/20 resize-none"
+                                    rows="5"
+                                >{{ old('announcement_text') }}</textarea>
+                            </div>
                         </div>
                         
                         <div class="mt-4 flex items-center justify-between">
@@ -212,7 +266,7 @@
                             </div>
                             
                             <button type="submit" class="px-8 py-3 bg-slate-900 text-white font-black rounded-xl text-[10px] uppercase tracking-widest hover:bg-black transition">
-                                Save Notes & Notify
+                                Save Announcement & Notify
                             </button>
                         </div>
                     </form>

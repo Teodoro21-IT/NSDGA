@@ -106,8 +106,14 @@
                                 APP-2026-{{ str_pad($app->id, 4, '0', STR_PAD_LEFT) }}
                             </td>
                             <td class="px-8 py-5">
-                                <span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-yellow-100 text-yellow-700">
-                                    Pending Review
+                                @php
+                                    $statusText = $app->student_type === 'enrolled' ? 'Enrolled' : 'Applicant';
+                                    $statusClasses = $app->student_type === 'enrolled'
+                                        ? 'bg-green-100 text-green-700'
+                                        : 'bg-slate-100 text-slate-600';
+                                @endphp
+                                <span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider {{ $statusClasses }}">
+                                    {{ $statusText }}
                                 </span>
                             </td>
                             <td class="px-8 py-5 text-sm font-medium text-slate-500">

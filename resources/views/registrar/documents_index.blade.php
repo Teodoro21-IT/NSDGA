@@ -17,8 +17,8 @@
 
         <div class="p-10 pt-24 w-full">
             <div class="mb-8">
-                <h1 class="text-[32px] font-extrabold text-[#7f0000] tracking-tight">Document Review</h1>
-                <p class="text-slate-500 font-medium">Manage and verify student uploads in the verification queue.</p>
+                <h1 class="text-[32px] font-extrabold text-[#7f0000] tracking-tight">All Student Documents</h1>
+                <p class="text-slate-500 font-medium">View every submitted student document, enrolled or applicant, with status and student details.</p>
             </div>
 
             {{-- Search Bar --}}
@@ -29,7 +29,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </span>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search student name..." 
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search student name or document type..." 
                         class="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#7f0000]/20 outline-none text-sm font-medium transition-all">
                 </div>
             </form>
@@ -56,20 +56,35 @@
                             <td class="px-8 py-5">
                                 <div class="flex flex-wrap justify-center gap-2">
                                     @foreach($student->documents as $doc)
-                                        <span class="px-2 py-1 bg-slate-100 border border-slate-200 rounded text-[9px] font-bold text-slate-500 uppercase">
+                                        @php
+                                            $statusClass = match($doc->document_status) {
+                                                'verified' => 'bg-emerald-50 border-emerald-200 text-emerald-700',
+                                                'under_review' => 'bg-sky-50 border-sky-200 text-sky-700',
+                                                'action_needed' => 'bg-rose-50 border-rose-200 text-rose-700',
+                                                default => 'bg-slate-100 border-slate-200 text-slate-500',
+                                            };
+                                        @endphp
+                                        <span class="px-2 py-1 border rounded text-[9px] font-bold uppercase tracking-[0.12em] {{ $statusClass }}">
                                             {{ str_replace('_', ' ', $doc->document_type) }}
                                         </span>
                                     @endforeach
                                 </div>
                             </td>
                             <td class="px-8 py-5 text-center">
-                                {{-- We check the student's document status from the relationship --}}
                                 @php
-                                    $needsAction = $student->documents->contains('document_status', 'action_needed');
+                                    $hasActionNeeded = $student->documents->contains('document_status', 'action_needed');
+                                    $hasUnderReview = $student->documents->contains('document_status', 'under_review');
+                                    $hasVerified = $student->documents->contains('document_status', 'verified');
                                 @endphp
-                                <span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider {{ $needsAction ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-700' }}">
-                                    {{ $needsAction ? 'Action Needed' : 'Under Review' }}
-                                </span>
+                                @if($hasActionNeeded)
+                                    <span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-100 text-red-600">Action Needed</span>
+                                @elseif($hasUnderReview)
+                                    <span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-sky-100 text-sky-700">Under Review</span>
+                                @elseif($hasVerified)
+                                    <span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700">Verified</span>
+                                @else
+                                    <span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-600">No Uploads</span>
+                                @endif
                             </td>
                             <td class="px-8 py-5 text-right">
                                 <a href="{{ route('registrar.records.view', $student->id) }}" class="p-2 text-slate-400 hover:text-[#7f0000] transition inline-block">
@@ -83,7 +98,7 @@
                         @empty
                         <tr>
                             <td colspan="4" class="px-8 py-20 text-center text-slate-400 font-medium italic">
-                                No documents currently pending review.
+                                No student documents found.
                             </td>
                         </tr>
                         @endforelse

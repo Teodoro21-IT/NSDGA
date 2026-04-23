@@ -116,13 +116,13 @@
                                 APP-{{ $app->created_at->format('Y') }}-{{ str_pad($app->id, 4, '0', STR_PAD_LEFT) }}
                             </td>
                             <td class="px-8 py-6">
-                                @if($app->student_type == 'new')
-                                    <span class="px-4 py-1.5 bg-[#E8F1A7] text-[#8A943E] text-[10px] font-black rounded-full uppercase tracking-widest">
-                                        Pending Review
+                                @if($app->student_type === 'enrolled')
+                                    <span class="px-4 py-1.5 bg-[#A7F1BA] text-[#3E9452] text-[10px] font-black rounded-full uppercase tracking-widest">
+                                        Enrolled
                                     </span>
                                 @else
-                                    <span class="px-4 py-1.5 bg-[#A7F1BA] text-[#3E9452] text-[10px] font-black rounded-full uppercase tracking-widest">
-                                        {{ $app->student_type }}
+                                    <span class="px-4 py-1.5 bg-[#E8F1A7] text-[#8A943E] text-[10px] font-black rounded-full uppercase tracking-widest">
+                                        Applicant
                                     </span>
                                 @endif
                             </td>
